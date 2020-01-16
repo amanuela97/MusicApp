@@ -2,13 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
+const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/";
+
 const ListItem = (props) => {
     return (
         <TouchableOpacity>
             <View style={styles.container}>
                 <Image
                     style={styles.image}
-                    source={{uri: props.singleMedia.thumbnails.w160}}
+                    source={{uri: mediaURL + props.singleMedia.thumbnails.w160}}
                 />
                 <View style={styles.details}>
                     <Text style={{fontWeight: "bold"}}>{props.singleMedia.title}</Text>
@@ -23,7 +25,7 @@ const ListItem = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'gray',
+        backgroundColor: '#999',
         alignItems: 'center',
         paddingTop: 12 ,
         paddingBottom: 12,
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
         marginLeft: '4%',
         height: '100%',
         width: '40%',
-        borderRadius: 15,
+        borderRadius: 5,
     },
 });
 
