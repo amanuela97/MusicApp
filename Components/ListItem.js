@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
 const ListItem = (props) => {
-    console.log("list item props", props);
     return (
         <TouchableOpacity>
             <View style={styles.container}>
