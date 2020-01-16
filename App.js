@@ -1,6 +1,6 @@
 import React from 'react';
 import List from './Components/List';
-import {StyleSheet, View} from "react-native";
+import {View} from "react-native";
 
 
 const mediaArray = [
