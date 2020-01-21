@@ -1,14 +1,11 @@
 import React from 'react';
-import List from './Components/List.js';
-import {View} from "react-native";
 import {MediaProvider} from './contexts/MediaContext.js';
+import Navigator from './navigators/Navigator.js'
 
 const App = () => {
   return (
       <MediaProvider>
-          <View style={{marginTop: 19}}>
-              <List />
-          </View>
+         <Navigator/>
       </MediaProvider>
   );
 };

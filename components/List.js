@@ -5,7 +5,7 @@ import ListItem from "./ListItem";
 import {MediaContext} from "../contexts/MediaContext";
 import {getAllMedia} from '../hooks/APIHooks.js';
 
-const List = () => {
+const List = (props) => {
     const [media, setMedia] = useContext(MediaContext);
     const [data, loading] = getAllMedia();
     console.log('List', data, loading);
@@ -14,7 +14,7 @@ const List = () => {
         <FlatList
             data={media}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => <ListItem singleMedia={item} />}
+            renderItem={({item}) => <ListItem singleMedia={item} navigation={props.navigation} />}
         />
         );
 };
