@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image} from 'react-native';
+import {StyleSheet, View, Text,Image} from 'react-native';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/";
 

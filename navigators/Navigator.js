@@ -1,9 +1,11 @@
 import Home from "../views/Home";
 import Profile from "../views/Profile";
 import {createStackNavigator} from "react-navigation-stack";
-import {createAppContainer} from 'react-navigation';
+import {createAppContainer,createSwitchNavigator} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import Single from "../views/Singel";
+import AuthLoading from '../views/AuthLoading.js';
+import Login from '../views/Login';
 
 const TabNavigator = createBottomTabNavigator(
     {
@@ -19,13 +21,16 @@ const TabNavigator = createBottomTabNavigator(
                 title: 'Profile',
             },
         },
+        Login: {
+            screen: Login,
+        },
     },
     {
         initialRouteName: 'Home',
     }
 );
 
-const Navigator = createStackNavigator(
+const AppStack = createStackNavigator(
     // RouteConfigs
     {
         Home: {
@@ -38,6 +43,17 @@ const Navigator = createStackNavigator(
             screen: Single,
         },
     },
+);
+
+const Navigator = createSwitchNavigator(
+    {
+        AuthLoading: AuthLoading,
+        App: AppStack,
+        Auth: Login,
+    },
+    {
+        initialRouteName: 'AuthLoading',
+    }
 );
 
 export default createAppContainer(Navigator);
