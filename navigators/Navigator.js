@@ -21,9 +21,6 @@ const TabNavigator = createBottomTabNavigator(
                 title: 'Profile',
             },
         },
-        Login: {
-            screen: Login,
-        },
     },
     {
         initialRouteName: 'Home',
@@ -36,12 +33,15 @@ const AppStack = createStackNavigator(
         Home: {
             screen: TabNavigator,
             navigationOptions: {
-                headerMode: 'none', // this will hide the header
+                headerMode: null, // this will hide the header
             },
         },
         Single: {
             screen: Single,
         },
+        Logout:{
+            screen: Login,
+        }
     },
 );
 

@@ -1,5 +1,4 @@
 import React, {useContext} from 'react';
-//import PropTypes from 'prop-types';
 import {FlatList} from "react-native";
 import ListItem from "./ListItem";
 import {MediaContext} from "../contexts/MediaContext";
@@ -8,7 +7,7 @@ import {getAllMedia} from '../hooks/APIHooks.js';
 const List = (props) => {
     const [media, setMedia] = useContext(MediaContext);
     const [data, loading] = getAllMedia();
-    console.log('List', data, loading);
+    //console.log('List',  loading);
     setMedia(data);
     return(
         <FlatList
@@ -19,8 +18,5 @@ const List = (props) => {
         );
 };
 
-/*List.propTypes = {
-    mediaArray: PropTypes.array,
-};*/
 
 export default List;

@@ -16,7 +16,7 @@ const getAllMedia = () => {
                 return await tnResponse.json();
             }));
 
-            console.log('Hooks:', result);
+            //console.log('Hooks:', result);
             setData(result);
             setLoading(false);
         }catch(e){
@@ -24,9 +24,46 @@ const getAllMedia = () => {
 
         }
     };
+
     useEffect(() => {
         fetchUrl();
     }, []);
     return [data, loading];
 };
-export { getAllMedia };
+
+const login =  async (data) =>{
+  const fetchOptions = {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  };
+  try{
+      const  response = await fetch(apiUrl + 'login', fetchOptions);
+      return  await response.json();
+
+  }catch (e) {
+      console.log('error', e.message);
+  }
+
+};
+
+const register =  async (data) =>{
+    const fetchOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    };
+    try{
+        const  response = await fetch(apiUrl + 'users', fetchOptions);
+        return  await response.json();
+
+    }catch (e) {
+        console.log('error', e.message);
+    }
+
+};
+export { getAllMedia, login, register};

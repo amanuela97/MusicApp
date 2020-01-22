@@ -5,16 +5,18 @@ import {
     StatusBar,
     View,
 } from 'react-native';
+import PropTypes from "prop-types";
+
 
 const bootstrapAsync = async (props) => {
-    async function getToken() {
+    const getToken = async () => {
         const userToken = await AsyncStorage.getItem('userToken');
 
         // This will switch to the App screen or Auth screen and this loading
         // screen will be unmounted and thrown away.
         console.log('token', userToken);
         props.navigation.navigate(userToken ? 'App' : 'Auth');
-    }
+    };
     useEffect(() => {
         getToken();
     }, []);
@@ -28,6 +30,10 @@ const AuthLoading = (props) => {
             <StatusBar barStyle="default" />
         </View>
     );
+};
+
+AuthLoading.protTypes = {
+    navigation: PropTypes.object,
 };
 
 export default AuthLoading;
