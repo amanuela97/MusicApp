@@ -16,7 +16,7 @@ const getAllMedia = () => {
                 return await tnResponse.json();
             }));
 
-            //console.log('Hooks:', result);
+            console.log('Hooks:', result);
             setData(result);
             setLoading(false);
         }catch(e){

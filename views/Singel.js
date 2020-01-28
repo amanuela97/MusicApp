@@ -1,34 +1,36 @@
 import React from 'react';
-import {StyleSheet, View, Text,Image} from 'react-native';
+import {Text,CardItem, Card, Content, Container, Body, Icon, Left, Right} from 'native-base';
+import {Image} from 'react-native';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/";
 
 const Single = (props) => {
     const { navigation } = props;
     return (
-        <View style={styles.container}>
-            <Image
-                style={styles.image}
-                source={{uri: mediaURL + navigation.getParam('file', 'default value')}}
-            />
-            <Text>title: {JSON.stringify(navigation.getParam('title', 'default value'))}</Text>
-        </View>
+        <Container>
+            <Content>
+                <Card style={{flex: 0}}>
+                    <CardItem>
+                        <Image square source={{uri: mediaURL + navigation.getParam('file', 'default value') }}
+                                   style={{height: 320, width: 320, flex: 1}}
+                        />
+                    </CardItem>
+                    <CardItem>
+                        <Left>
+                            <Icon name='image' />
+                            <Body>
+                                <Text>{navigation.getParam('title', 'default value')}</Text>
+                                <Text>
+                                    {navigation.getParam('description', 'default value')}
+                                </Text>
+                            </Body>
+                        </Left>
+                    </CardItem>
+                </Card>
+            </Content>
+        </Container>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 40,
-    },
-    image: {
-        height: '70%',
-        width: '80%',
-        borderRadius: 2,
-    },
-});
 
 export default Single;

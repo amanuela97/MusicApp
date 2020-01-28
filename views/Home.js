@@ -1,13 +1,15 @@
-import {View} from "react-native";
 import List from "../components/List";
 import React from "react";
+import {Content, Container, Header} from "native-base";
 
 const Home = (props) => {
     const {navigation} = props;
     return (
-        <View style={{marginTop: 19}}>
-            <List navigation={navigation}/>
-        </View>
+        <Container>
+            <Content>
+                <List navigation={navigation}/>
+            </Content>
+        </Container>
     );
 };
 
