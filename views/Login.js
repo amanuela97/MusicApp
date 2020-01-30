@@ -8,7 +8,7 @@ import {fetchPOST, fetchGET} from '../hooks/APIHooks.js';
 import validate from "validate.js";
 
 const Login = (props) => { // props is needed for navigation
-    const [loginPage, setLoginPage] = useState(true);
+    const [toggleForm, setToggleForm] = useState(true);
     const {setError,errors,inputs,
         handleUsernameChange,
         handlePasswordChange,
@@ -85,7 +85,7 @@ const Login = (props) => { // props is needed for navigation
     return (
         <Container>
             <Content style={{marginTop: '6%'}}>
-                { loginPage === true &&
+                { toggleForm === true &&
                 <Form>
                     <Title>
                         <Text style={{textAlign: 'center', fontWeight: 'bold' , fontSize: 24}}>Login</Text>
@@ -114,13 +114,13 @@ const Login = (props) => { // props is needed for navigation
                     }  title=''><Text>Sign in!</Text>
                     </Button>
                     <Button Success title='' onPress={()=>{
-                        setLoginPage(false);
+                        setToggleForm(false);
                     }}>
                         <Text>No account yet?</Text>
                     </Button>
                 </Form>}
 
-                { loginPage === false &&
+                { setToggleForm === false &&
                 <Form>
                     <Title>
                         <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 24}}>Register</Text>
@@ -211,7 +211,7 @@ const Login = (props) => { // props is needed for navigation
                         }  title='Register!'><Text>Register!</Text>
                         </Button>
                         <Button Success title='' onPress={()=>{
-                            setLoginPage(true);
+                            setToggleForm(true);
                         }}>
                             <Text>Already have an account?</Text>
                         </Button>

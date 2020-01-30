@@ -1,7 +1,8 @@
 import React, {useEffect,useState} from 'react';
-import {AsyncStorage,Image} from 'react-native';
+import {AsyncStorage} from 'react-native';
 import {Body, Card, CardItem, Container, Content, Icon, Left, Text, Button} from "native-base";
 import {fetchGET} from '../hooks/APIHooks.js';
+import {AsyncImage} from '../components/AsynImage.js';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/";
 
@@ -19,7 +20,7 @@ const Profile = (props) => {
             const uData = JSON.parse(userFromStorage);
             const avatarPic = await fetchGET('tags', 'avatar_' + uData.user_id);
             console.log('aPic', avatarPic[0].filename);
-            setUser((user) => (
+            setUser(() => (
                 {
                     userData: uData,
                     avatar: avatarPic[0].filename,
@@ -54,9 +55,10 @@ const Profile = (props) => {
                 <Card style={{flex: 0}}>
                     <CardItem>
                         <Body>
-                            <Image square
-                                   source={{uri: mediaURL + user.avatar }}
+                            <AsyncImage
                                    style={{height: 300, width: 320, flex: 1}}
+                                   source={{uri: mediaURL + user.avatar }}
+                                   placeholderColor='#b3e5fc'
                             />
                             <Text>FullName: {user.userData.full_name}</Text>
                             <Text>email: {user.userData.email}</Text>

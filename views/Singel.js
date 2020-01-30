@@ -1,6 +1,6 @@
 import React from 'react';
-import {Text,CardItem, Card, Content, Container, Body, Icon, Left, Right} from 'native-base';
-import {Image} from 'react-native';
+import {Text,CardItem, Card, Content, Container, Body, Icon, Left} from 'native-base';
+import {AsyncImage} from '../components/AsynImage.js';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/";
 
@@ -9,10 +9,14 @@ const Single = (props) => {
     return (
         <Container>
             <Content>
-                <Card style={{flex: 0}}>
+                <Card>
                     <CardItem>
-                        <Image square source={{uri: mediaURL + navigation.getParam('file', 'default value') }}
-                                   style={{height: 320, width: 320, flex: 1}}
+                        <AsyncImage
+                            style={{height: 320, width: 320}}
+                            source={{
+                                uri: mediaURL + navigation.getParam('file', 'default value')
+                            }}
+                            placeholderColor='#b3e5fc'
                         />
                     </CardItem>
                     <CardItem>
@@ -31,6 +35,5 @@ const Single = (props) => {
         </Container>
     );
 };
-
 
 export default Single;
