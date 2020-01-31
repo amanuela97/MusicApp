@@ -16,7 +16,7 @@ const Single = (props) => {
                             source={{
                                 uri: mediaURL + navigation.getParam('file', 'default value')
                             }}
-                            placeholderColor='#b3e5fc'
+                            placeholderColor='white'
                         />
                     </CardItem>
                     <CardItem>

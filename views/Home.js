@@ -1,6 +1,6 @@
 import List from "../components/List";
 import React from "react";
-import {Content, Container, Header} from "native-base";
+import {Content, Container} from "native-base";
 
 const Home = (props) => {
     const {navigation} = props;

@@ -58,7 +58,7 @@ const Profile = (props) => {
                             <AsyncImage
                                    style={{height: 300, width: 320, flex: 1}}
                                    source={{uri: mediaURL + user.avatar }}
-                                   placeholderColor='#b3e5fc'
+                                   placeholderColor='white'
                             />
                             <Text>FullName: {user.userData.full_name}</Text>
                             <Text>email: {user.userData.email}</Text>

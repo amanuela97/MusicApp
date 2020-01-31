@@ -120,101 +120,101 @@ const Login = (props) => { // props is needed for navigation
                     </Button>
                 </Form>}
 
-                { setToggleForm === false &&
+                { toggleForm === false &&
                 <Form>
                     <Title>
                         <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 24}}>Register</Text>
                     </Title>
-                        <Item underline>
-                            <FormTextInput
-                                autoCapitalize='none'
-                                placeholder='username'
-                                onChangeText={handleUsernameChange}
-                                value={inputs.username}
-                                onEndEditing={(evt) =>
-                                    {
-                                        const text = evt.nativeEvent.text;
-                                        checkIfUserExists(text);
-                                        validateField('username', inputs.username);
-                                    }
-                                }
-                                error={errors.username}
-
-                            />
-                        </Item>
-                        <Item underline>
-                            <FormTextInput
-                                autoCapitalize='none'
-                                placeholder='email'
-                                onChangeText={handleEmailChange}
-                                value={inputs.email}
-                                onEndEditing={() =>
-                                    {
-                                        validateField('email', inputs.email);
-                                    }
-                                }
-                                error={errors.email}
-                            />
-                        </Item>
-                        <Item underline>
-                            <FormTextInput
-                                autoCapitalize='none'
-                                placeholder='fullName'
-                                onChangeText={handleFullNameChange}
-                                value={inputs.full_name}
-                                onEndEditing={() =>
-                                    {
-                                        validateField('full_name', inputs.full_name);
-                                    }
-                                }
-                                error={errors.full_name}
-
-                            />
-                        </Item>
-                        <Item underline>
-                            <FormTextInput
-                                autoCapitalize='none'
-                                placeholder='password'
-                                secureTextEntry={true}
-                                onChangeText={handlePasswordChange}
-                                value={inputs.password}
-                                onEndEditing={() =>
-                                    {
-                                        validateField('password', inputs.password);
-                                    }
-                                }
-                                error={errors.password}
-                            />
-                        </Item>
-                        <Item underline>
-                            <FormTextInput
-                                autoCapitalize='none'
-                                placeholder='confirm password'
-                                secureTextEntry={true}
-                                //onChangeText={handlePasswordChange}
-                                //value={inputs.password}
-                                onEndEditing={(evt) =>
-                                    {
-                                        const text = evt.nativeEvent.text;
-                                        validateField('confirmPassword', text);
-                                    }
-                                }
-                                error={errors.confirmPassword}
-
-
-                            />
-                        </Item>
-                        <Button info onPress={
-                            () => {
-                              registerAsync();
+                    <Item underline>
+                        <FormTextInput
+                            autoCapitalize='none'
+                            placeholder='username'
+                            onChangeText={handleUsernameChange}
+                            value={inputs.username}
+                            onEndEditing={(evt) =>
+                            {
+                                const text = evt.nativeEvent.text;
+                                checkIfUserExists(text);
+                                validateField('username', inputs.username);
                             }
-                        }  title='Register!'><Text>Register!</Text>
-                        </Button>
-                        <Button Success title='' onPress={()=>{
-                            setToggleForm(true);
-                        }}>
-                            <Text>Already have an account?</Text>
-                        </Button>
+                            }
+                            error={errors.username}
+
+                        />
+                    </Item>
+                    <Item underline>
+                        <FormTextInput
+                            autoCapitalize='none'
+                            placeholder='email'
+                            onChangeText={handleEmailChange}
+                            value={inputs.email}
+                            onEndEditing={() =>
+                            {
+                                validateField('email', inputs.email);
+                            }
+                            }
+                            error={errors.email}
+                        />
+                    </Item>
+                    <Item underline>
+                        <FormTextInput
+                            autoCapitalize='none'
+                            placeholder='fullName'
+                            onChangeText={handleFullNameChange}
+                            value={inputs.full_name}
+                            onEndEditing={() =>
+                            {
+                                validateField('full_name', inputs.full_name);
+                            }
+                            }
+                            error={errors.full_name}
+
+                        />
+                    </Item>
+                    <Item underline>
+                        <FormTextInput
+                            autoCapitalize='none'
+                            placeholder='password'
+                            secureTextEntry={true}
+                            onChangeText={handlePasswordChange}
+                            value={inputs.password}
+                            onEndEditing={() =>
+                            {
+                                validateField('password', inputs.password);
+                            }
+                            }
+                            error={errors.password}
+                        />
+                    </Item>
+                    <Item underline>
+                        <FormTextInput
+                            autoCapitalize='none'
+                            placeholder='confirm password'
+                            secureTextEntry={true}
+                            //onChangeText={handlePasswordChange}
+                            //value={inputs.password}
+                            onEndEditing={(evt) =>
+                            {
+                                const text = evt.nativeEvent.text;
+                                validateField('confirmPassword', text);
+                            }
+                            }
+                            error={errors.confirmPassword}
+
+
+                        />
+                    </Item>
+                    <Button info onPress={
+                        () => {
+                            registerAsync();
+                        }
+                    }  title='Register!'><Text>Register!</Text>
+                    </Button>
+                    <Button Success title='' onPress={()=>{
+                        setToggleForm(true);
+                    }}>
+                        <Text>Already have an account?</Text>
+                    </Button>
                 </Form>}
             </Content>
         </Container>
@@ -228,5 +228,4 @@ Login.protTypes = {
 };
 
 export default Login;
-
 

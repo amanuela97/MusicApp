@@ -41,7 +41,7 @@ const AppStack = createStackNavigator(
         Home: {
             screen: TabNavigator,
             navigationOptions: {
-                headerMode: null, // this will hide the header
+                headerMode: 'none', // this will hide the header
             },
         },
         Single: {
