@@ -30,6 +30,7 @@ const ListItem = (props) => {
 
 ListItem.propTypes = {
     singleMedia: PropTypes.object,
+    navigation: PropTypes.object,
 };
 
 export default ListItem;

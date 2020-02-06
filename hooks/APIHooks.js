@@ -1,7 +1,9 @@
 // hooks.js
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
+
 
 const apiUrl = 'http://media.mw.metropolia.fi/wbma/';
+
 
 const getAllMedia = () => {
     const [data, setData] = useState([]);

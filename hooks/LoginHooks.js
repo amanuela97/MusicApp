@@ -1,71 +1,45 @@
 import {useState} from 'react';
-const validation = {
-    confirmPassword: {
-        equality: "password"
-    },
+import validate from 'validate.js';
+import {fetchGET} from './APIHooks';
+
+const constraints = {
     username: {
         presence: {
-            message: '^Please enter a username address'
+            message: 'cannot be blank.',
         },
         length: {
             minimum: 3,
-            message: '^Your username must be at least 3 characters'
+            message: 'must be at least 3 characters',
         },
-        format: {
-            pattern: "[a-z0-9]+",
-            flags: "i",
-            message: "can only contain a-z and 0-9"
-        }
     },
-
     email: {
         presence: {
-            message: '^Please enter an email address'
+            message: 'cannot be blank.',
         },
         email: {
-            pattern: '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
-            message: '^Please enter a valid email address'
-        }
+            message: 'not valid.',
+        },
     },
-
+    fullname: {
+        presence: 'cannot be blank.',
+    },
     password: {
-        presence: {
-            message: '^Please enter your password'
-        },
         length: {
             minimum: 5,
-            message: '^Your password must be at least 5 characters'
-        }
+            message: 'must be at least 5 characters',
+        },
     },
-
-    full_name: {
-        presence: {
-            message: '^Please enter your fullName'
+    confirmPassword: {
+        presence: 'cannot be blank.',
+        equality: {
+            attribute: 'password',
         },
-        length: {
-            minimum: 5,
-            message: '^Your fullName must be at least 5 characters'
-        },
-        format: {
-            pattern: '^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$',
-            flags: "i",
-            message: "^Write a valid fullName"
-        }
     },
 };
 
 const useSignUpForm = () => {
-    const emptyError = {
-        username: undefined,
-        email: undefined,
-        password: undefined,
-        confirmPassword: undefined,
-        full_name: undefined,
-        fetch: undefined,
-    };
     const [inputs, setInputs] = useState({});
-    const [errors, setError] = useState(emptyError);
-
+    const [errors, setErrors] = useState({});
     const handleUsernameChange = (text) => {
         setInputs((inputs) =>
             ({
@@ -73,6 +47,7 @@ const useSignUpForm = () => {
                 username: text,
             }));
     };
+
     const handlePasswordChange = (text) => {
         setInputs((inputs) =>
             ({
@@ -80,6 +55,15 @@ const useSignUpForm = () => {
                 password: text,
             }));
     };
+
+    const handleConfirmPasswordChange = (text) => {
+        setInputs((inputs) =>
+            ({
+                ...inputs,
+                confirmPassword: text,
+            }));
+    };
+
     const handleEmailChange = (text) => {
         setInputs((inputs) =>
             ({
@@ -87,23 +71,80 @@ const useSignUpForm = () => {
                 email: text,
             }));
     };
-    const handleFullNameChange = (text) => {
+    const handleFull_nameChange = (text) => {
         setInputs((inputs) =>
             ({
                 ...inputs,
                 full_name: text,
             }));
     };
+
+    const validateField = (attr) => {
+        const attrName = Object.keys(attr).pop(); // get the only or last item from array
+        const valResult = validate(attr, constraints);
+        console.log(attr, 'attr');
+        console.log('valresult', valResult);
+        let valid = undefined;
+        if (valResult[attrName]) {
+            valid = valResult[attrName][0]; // get just the first message
+        }
+        setErrors((errors) =>
+            ({
+                ...errors,
+                [attrName]: valid,
+                fetch: undefined,
+            }));
+    };
+
+    const checkAvail = async () => {
+        const text = inputs.username;
+        try {
+            const result = await fetchGET('users/username', text);
+            console.log(result);
+            if (!result.available) {
+                setErrors((errors) =>
+                    ({
+                        ...errors,
+                        username: 'Username not available.',
+                    }));
+            }
+        } catch (e) {
+            setErrors((errors) =>
+                ({
+                    ...errors,
+                    fetch: e.message,
+                }));
+        }
+    };
+
+    const validateOnSend = (fields) => {
+        checkAvail();
+
+        for (const [key, value] of Object.entries(fields)) {
+            console.log(key, value);
+            validateField(value);
+        }
+
+        return !(errors.username !== undefined ||
+            errors.email !== undefined ||
+            errors.full_name !== undefined ||
+            errors.password !== undefined ||
+            errors.confirmPassword !== undefined);
+    };
+
     return {
         handleUsernameChange,
         handlePasswordChange,
+        handleConfirmPasswordChange,
         handleEmailChange,
-        handleFullNameChange,
+        handleFull_nameChange,
+        checkAvail,
+        validateField,
+        validateOnSend,
         inputs,
         errors,
-        setError,
+        setErrors,
     };
 };
 
-
-export {useSignUpForm, validation};
+export default useSignUpForm;

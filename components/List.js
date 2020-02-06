@@ -9,6 +9,7 @@ const List = (props) => {
     const [data, loading] = getAllMedia();
     console.log('List',  loading);
     setMedia(data);
+
     return(
         <BaseList
             dataArray={media}
