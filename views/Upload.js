@@ -6,6 +6,7 @@ import {useUploadForm} from '../hooks/UploadHooks.js';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
+import {AsyncImage} from '../components/AsynImage.js';
 
 
 export const Upload = (props)=> {
@@ -92,7 +93,7 @@ export const Upload = (props)=> {
                               style={{height: 300, width: 320, flex: 1, backgroundColor: 'gray'}}
                           />}
                           {image &&
-                          <Image
+                          <AsyncImage
                               style={{height: 300, width: 320, flex: 1, backgroundColor: 'gray'}}
                               source={{uri: image.image}}
                           />}
