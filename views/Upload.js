@@ -1,170 +1,177 @@
-import React, {useEffect}  from 'react';
-import {Image} from 'react-native';
-import {Body, Button, Card, CardItem, Container, Content, Form, Item, Text,} from "native-base";
-import FormTextInput from "../components/FormTextInput";
-import {useUploadForm} from '../hooks/UploadHooks.js';
+import React, {useState, useEffect, useContext} from 'react';
+import {
+    Content,
+    Form,
+    Button,
+    Text,
+    Item,
+    Spinner,
+} from 'native-base';
+
+import {
+    Dimensions,
+    Image,
+} from 'react-native';
+import PropTypes from 'prop-types';
+import FormTextInput from '../components/FormTextInput';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import {AsyncImage} from '../components/AsynImage.js';
+import useUploadForm from '../hooks/UploadHooks';
+import {MediaContext} from '../contexts/MediaContext';
+import {validateField} from '../Utils/Validation';
+import {uploadConstraints} from '../constants/ValidationConst';
 
+const deviceHeight = Dimensions.get('window').height;
 
-export const Upload = (props)=> {
+const Upload = (props) => {
+    const {media, setMedia} = useContext(MediaContext);
+    const [image, setImage] = useState(null);
+    const [send, setSend] = useState(false);
 
-    const {image, setImage, inputs, setInputs, errors, setErrors,
+    const {
         handleTitleChange,
         handleDescriptionChange,
         handleUpload,
-        validateField,
-        validateOnSend} = useUploadForm();
+        inputs,
+        errors,
+        setErrors,
+        setInputs,
+        loading,
+    } = useUploadForm();
 
     const validationProperties = {
         title: {title: inputs.title},
         description: {description: inputs.description},
     };
 
+    const validate = (field, value) => {
+        console.log('vp', validationProperties[field]);
+        setErrors((errors) =>
+            ({
+                ...errors,
+                [field]: validateField({[field]: value},
+                    uploadConstraints),
+                fetch: undefined,
+            }));
+    };
+
+    const reset = () => {
+        setErrors({});
+        setInputs({});
+        setImage(null);
+    };
+
     const getPermissionAsync = async () => {
         if (Constants.platform.ios) {
-            const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+            const {status} = await Permissions.askAsync(Permissions.CAMERA_ROLL);
             if (status !== 'granted') {
                 alert('Sorry, we need camera roll permissions to make this work!');
             }
         }
     };
 
-    const _pickImage = async () => {
-
-        try {
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1
-            });
-
-            console.log(result);
-
-            if (!result.cancelled) {
-                setImage(()=> ({
-                    image: result.uri,
-                }));
-            }
-
-
-        }catch (e) {
-            console.log('_pickImage error ', e.message);
-        }
-    };
-
-    const uploadFile = async () => {
-        const uploadValid = validateOnSend(validationProperties);
-        console.log('reg field errors', errors);
-        if (!uploadValid) {
-            console.log('worked');
-            return;
-        }
-
-        try {
-            handleUpload(image.image, props.navigation);
-        } catch (e) {
-            console.log('registerAsync error: ', e.message);
-            setErrors((errors) =>
-                ({
-                    ...errors,
-                    fetch: e.message,
-                }));
-        }
-    };
-
-
     useEffect(() => {
         getPermissionAsync();
-        console.log('hello from upload');
     }, []);
 
-  return(
-      <Container>
-          <Content>
-              <Form>
-                  <CardItem>
-                      <Body>
-                          {!image &&
-                          <Image
-                              style={{height: 300, width: 320, flex: 1, backgroundColor: 'gray'}}
-                          />}
-                          {image &&
-                          <AsyncImage
-                              style={{height: 300, width: 320, flex: 1, backgroundColor: 'gray'}}
-                              source={{uri: image.image}}
-                          />}
-                      </Body>
-                  </CardItem>
-                  <Item underline>
-                    <FormTextInput
-                        autoCapitalize='none'
-                        value={inputs.title}
-                        placeholder='title'
-                        onChangeText={handleTitleChange}
-                        onEndEditing={() => {
-                            validateField(validationProperties.title);
-                        }}
-                        error={errors.title}
-                    >
-                    </FormTextInput>
-                  </Item>
-                  <Item underline>
-                      <FormTextInput
-                          autoCapitalize='none'
-                          value={inputs.description}
-                          placeholder='description'
-                          onChangeText={handleDescriptionChange}
-                          onEndEditing={() => {
-                              validateField(validationProperties.description);
-                          }}
-                          error={errors.description}
-                      >
-                      </FormTextInput>
-                  </Item>
-                  <CardItem>
-                      <Button info title='' onPress={
-                          () => {
-                            _pickImage();
-                          }
-                      } >
-                          <Text>Select File</Text>
-                      </Button>
-                      <Button Success title='' onPress={
-                          ()=>{
-                              uploadFile();
-                          }
-                      }>
-                          <Text>Upload</Text>
-                      </Button>
-                      <Button dark title='' onPress={
-                          ()=>{
-                                setImage(()=> ({
-                                    image: null,
-                                }));
-                                setInputs(()=>({
-                                    title: '',
-                                    description: '',
-                                }));
-                          }
-                      }>
-                          <Text>Reset</Text>
-                      </Button>
-                  </CardItem>
-                  {errors.fetch &&
-                  <Card>
-                      <CardItem>
-                          <Body>
-                              <Text>{errors.fetch}</Text>
-                          </Body>
-                      </CardItem>
-                  </Card>
-                  }
-              </Form>
-          </Content>
-      </Container>
-  );
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.3,
+            exif: true,
+        });
+
+        console.log(result);
+
+        if (!result.cancelled) {
+            setImage(result);
+        }
+    };
+
+    const handleTitle = (text) => {
+        handleTitleChange(text);
+        validate('title', text);
+    };
+
+    const handleDescription = (text) => {
+        handleDescriptionChange(text);
+        validate('description', text);
+    };
+
+    const upload = () => {
+        console.log('reg field errors', errors);
+        handleUpload(image, props.navigation, setMedia);
+        reset();
+    };
+
+    const checkErrors = () => {
+        console.log('errors', errors);
+        if (errors.title !== undefined ||
+            errors.description !== undefined) {
+            setSend(false);
+        } else {
+            setSend(true);
+        }
+    };
+
+    useEffect(() => {
+        checkErrors();
+    }, [errors]);
+
+    console.log('send', send);
+
+    return (
+        <Content>
+            {loading ? (
+                <Spinner/>
+            ) : (
+                <Form>
+                    <Item>
+                        <FormTextInput
+                            placeholder='Title'
+                            onChangeText={handleTitle}
+                            value={inputs.title}
+                            error={errors.title}
+                        />
+                    </Item>
+                    <Item>
+                        <FormTextInput
+                            placeholder='Description'
+                            onChangeText={handleDescription}
+                            value={inputs.description}
+                            error={errors.description}
+                        />
+                    </Item>
+                    {image &&
+                    <Image source={{uri: image.uri}}
+                           style={{width: '100%', height: deviceHeight / 3}}/>
+                    }
+                    <Button full onPress={pickImage} title=''>
+                        <Text>Select file</Text>
+                    </Button>
+                    {image && send &&
+                    <Button full onPress={upload} title=''>
+                        <Text>Upload</Text>
+                    </Button>
+                    }
+                    <Button
+                        dark
+                        full
+                        onPress={reset} title=''>
+                        <Text>Reset form</Text>
+                    </Button>
+                </Form>
+            )}
+        </Content>
+    );
 };
+
+// proptypes here
+Upload.propTypes = {
+    navigation: PropTypes.object,
+};
+
+export default Upload;

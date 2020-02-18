@@ -1,38 +1,11 @@
-import React, {useState, useContext} from 'react';
-import {MediaContext} from "../contexts/MediaContext";
-import {fetchGET} from "./APIHooks";
-import {AsyncStorage} from "react-native";
-import validate from "validate.js";
-
-const constraints = {
-    title: {
-        presence: {
-            message: 'cannot be blank.',
-        },
-        length: {
-            minimum: 5,
-            message: 'must be at least 5 characters',
-        },
-    },
-    description: {
-        length: {
-            minimum: 10,
-            message: 'must be at least 10 characters',
-        },
-    },
-
-};
-
-const apiUrl = 'http://media.mw.metropolia.fi/wbma/';
-
-
+import {useState} from 'react';
+import {AsyncStorage} from 'react-native';
+import {fetchFormData, getAllMedia} from './APIHooks';
 
 const useUploadForm = () => {
-
-    const [image, setImage] = useState(null);
-    const [media,setMedia] = useContext(MediaContext);
     const [inputs, setInputs] = useState({});
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const handleTitleChange = (text) => {
         setInputs((inputs) =>
@@ -41,6 +14,7 @@ const useUploadForm = () => {
                 title: text,
             }));
     };
+
     const handleDescriptionChange = (text) => {
         setInputs((inputs) =>
             ({
@@ -49,95 +23,49 @@ const useUploadForm = () => {
             }));
     };
 
-    const handleUpload = async (localUri, navigation)=> {
-        try{
-            let filename = localUri.split('/').pop();
+    const handleUpload = async (file, navigation, setMedia) => {
+        const filename = file.uri.split('/').pop();
+        const match = /\.(\w+)$/.exec(filename);
+        let type = match ? `image/${match[1]}` : `image`;
+        // fix jpg mimetype
+        if (type === 'image/jpg') {
+            type = 'image/jpeg';
+        }
 
-            // Infer the type of the image
-            let match = /\.(\w+)$/.exec(filename);
-            let type = match ? `image/${match[1]}` : `image`;
-            if (type === 'image/jpg') type = 'image/jpeg';
+        const fd = new FormData();
+        fd.append('title', inputs.title);
+        fd.append('description', inputs.description);
+        fd.append('file', {uri: file.uri, name: filename, type});
 
-            // Upload the image using the fetch and FormData APIs
-            const formData = new FormData();
-            formData.append('file', {uri: localUri, name: filename, type});
-            formData.append('title', inputs.title);
-            formData.append('description', inputs.description);
+        console.log('FD:', fd);
 
-            const userToken = await AsyncStorage.getItem('userToken');
+        try {
+            const token = await AsyncStorage.getItem('userToken');
 
-            //post data to api
-            const fetchOptions = {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    'x-access-token': userToken,
-                },
-            };
 
-            const response = await fetch(apiUrl + 'media', fetchOptions);
-            const json = await response.json();
-
-            if (json.file_id){
-                //upload successful
-                const json = await fetchGET('media/all');
-                const result = await Promise.all(json.files.map(async (item) => {
-                    const tnResponse = await fetch(apiUrl + 'media/' + item.file_id);
-                    return await tnResponse.json();
-                }));
-
-                setMedia(result);
+            const resp = await fetchFormData('media', fd, token);
+            console.log('upl resp', resp);
+            if (resp.message) {
+                const data = getAllMedia();
+                setMedia(data);
+                setLoading(false);
                 navigation.push('Home');
             }
-
-        }catch (e) {
+        } catch (e) {
             console.log(e.message);
         }
     };
 
-    const validateField = (attr) => {
-        const attrName = Object.keys(attr).pop(); // get the only or last item from array
-        const valResult = validate(attr, constraints);
-        console.log(attr);
-        console.log('valresultt', valResult);
-        let valid = undefined;
-        if (valResult !== undefined && valResult[attrName]) {
-            valid = valResult[attrName][0]; // get just the first message
-        }
-        setErrors((errors) =>
-            ({
-                ...errors,
-                [attrName]: valid,
-                fetch: undefined,
-            }));
-    };
-
-    const validateOnSend = (fields) => {
-        for (const [key, value] of Object.entries(fields)) {
-            console.log(key, value, 'uploadValidation');
-            validateField(value);
-        }
-
-        return !(errors.title !== undefined ||
-            errors.description !== undefined);
-    };
-
-
-
     return {
-        handleUpload,
         handleTitleChange,
         handleDescriptionChange,
-        validateField,
-        validateOnSend,
+        handleUpload,
         inputs,
         errors,
+        loading,
         setErrors,
         setInputs,
-        image,
-        setImage
     };
 };
 
-export {useUploadForm};
+export default useUploadForm;
