@@ -2,18 +2,12 @@ import {apiUrl} from "../constants/UrlConst";
 
 const getUserMedia = async (token) => {
     console.log('getUserMedia');
-        let ids = [];
-        let ns = [0,1,4,6,9];
-        let myData = [];
         const json = await fetchGET('media/user', '', token);
-        json.forEach((item)=>{
-            ids.push(item.file_id);
-        });
-        for (const n of ns) {
-            const response =  await fetchGET('media' , ids[n]);
-            myData.push(response);
-        }
-        return myData;
+        return await Promise.all(json.map( async (item) => {
+             return await fetchGET('media' , item.file_id).catch( error => {
+                 console.log(error);
+            })
+        }));
 };
 
 const getAllMedia = async () => {

@@ -6,25 +6,6 @@ import {getAllMedia, getUserMedia} from '../hooks/APIHooks.js';
 import {AsyncStorage} from "react-native";
 import PropTypes from 'prop-types';
 
-const userData = [
-    {
-    "file_id": 64,
-    "filename": "2c389bce3b68ffa2403df1aa9b6c9240.jpg",
-    "filesize": 4264878,
-    "title": "peep hole",
-    "description": "illusion????",
-    "user_id": 24,
-    "media_type": "image",
-    "mime_type": "image/jpeg",
-    "time_added": "2020-02-04T19:57:24.000Z",
-    "thumbnails": {
-        "w640": "2c389bce3b68ffa2403df1aa9b6c9240-tn640.png",
-        "w320": "2c389bce3b68ffa2403df1aa9b6c9240-tn320.png",
-        "w160": "2c389bce3b68ffa2403df1aa9b6c9240-tn160.png"
-    }
-    },
-];
-
 const List = (props) => {
     const {media, setMedia, myMedia, setMyMedia} = useContext(MediaContext);
     const [loading, setLoading] = useState(true);
@@ -37,8 +18,14 @@ const List = (props) => {
                 setMedia(data);
             } else {
                 const token = await AsyncStorage.getItem('userToken');
-                data = await getUserMedia(token);
-                //data = userData;
+                const data2 = await getUserMedia(token);
+                data2.forEach(item => {
+                    if(item === undefined){
+                        console.log(item);
+                    }else {
+                        data.push(item);
+                    }
+                });
                 setMyMedia(data);
             }
             setLoading(false);
