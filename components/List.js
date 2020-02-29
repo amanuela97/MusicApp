@@ -20,9 +20,7 @@ const List = (props) => {
                 const token = await AsyncStorage.getItem('userToken');
                 const data2 = await getUserMedia(token);
                 data2.forEach(item => {
-                    if(item === undefined){
-                        console.log(item);
-                    }else {
+                    if(item.media_type === 'video' || item.media_type === 'audio'){
                         data.push(item);
                     }
                 });

@@ -1,36 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {Text,CardItem, Card, Content, Container, Body, Icon, Left, Right, Button} from 'native-base';
-import {AsyncStorage, Dimensions} from 'react-native';
+import React, {useState} from 'react';
+import {Text, CardItem, Card, Content, Container, Body, Icon, Left, Right, Button, Thumbnail, Accordion} from 'native-base';
+import {Dimensions, TouchableOpacity} from 'react-native';
 import {AsyncImage} from '../components/AsynImage.js';
 import { Video } from 'expo-av';
-import {fetchGET, fetchPOST} from "../hooks/APIHooks";
+import {fetchPOST} from "../hooks/APIHooks";
 import {mediaURL} from "../constants/UrlConst";
 
 const {height, width} = Dimensions.get('window');
 
 const Single = (props) => {
-    const [user, setUser] = useState({
-        userData: {},
-        token: '',
-    });
     const [color, setColor] = useState('gray');
     const { navigation } = props;
-    let fileData = navigation.getParam('fileData', 'default value');
-    const userInfo = async () => {
-        try {
-            let param = fileData.user_id;
-            const userToken = await AsyncStorage.getItem('userToken');
-            const user = await fetchGET('users', param, userToken);
-            setUser(() => (
-                {
-                    userData: user,
-                    token: userToken,
-                }));
+    let user = navigation.getParam('userData', 'default value');
+    let file = navigation.getParam('file', 'default value');
+    let Title = 'Show More';
+    const description = [
+        { title: Title, content: file.description },
+    ];
 
-        } catch (e) {
-            console.log('Profile error: ', e.message);
-        }
-    };
 
     const favourites = async () => {
         try {
@@ -45,34 +32,40 @@ const Single = (props) => {
         }
     };
 
-    useEffect(() => {
-        userInfo();
-    }, []);
 
     return (
         <Container>
-            <Content>
                 <Card>
                     <CardItem>
                         <Left>
-                            <Icon name='person' />
+                            <TouchableOpacity>
+                                {user.userProfile !== 'noPic' &&
+                                <Thumbnail source={{uri: mediaURL + user.userProfile}} />}
+                                {user.userProfile === 'noPic' &&
+                                <Thumbnail source={require('../assets/background.png')} />}
+                            </TouchableOpacity>
                             <Body>
-                                <Text style={{color: 'blue'}}>Username:  {user.userData.username}</Text>
+                                <Text style={{color: 'blue'}}>Artist: {user.userData.username}</Text>
                             </Body>
                         </Left>
                     </CardItem>
+                </Card>
+                <Card>
+                    <Body>
+                        <Text style={{color: 'blue'}}>{file.title}</Text>
+                    </Body>
                     <CardItem>
-                        { fileData.media_type === 'image' &&
+                        { file.media_type === 'audio' &&
                         <AsyncImage
                             style={{height: 320, width: 320}}
                             source={{
-                                uri: mediaURL + fileData.filename
+                                uri: ''
                             }}
                             placeholderColor='white'
                         />}
-                        {fileData.media_type === 'video' &&
+                        {file.media_type === 'video' &&
                         <Video
-                            source={{ uri: fileData.filename }}
+                            source={{ uri: mediaURL + file.filename }}
                             rate={1.0}
                             volume={1.0}
                             isMuted={false}
@@ -85,16 +78,30 @@ const Single = (props) => {
                     </CardItem>
                     <CardItem>
                         <Left>
-                            <Icon name= 'image' />
-                            <Body>
-                                <Text>{fileData.title}</Text>
-                                <Text>
-                                    {fileData.description}
-                                </Text>
-                            </Body>
+                            <Button transparent>
+                                <Icon active name="thumbs-up" />
+                                <Text>12 Likes</Text>
+                            </Button>
                         </Left>
+                        <Body>
+                            <Button transparent>
+                                <Icon active name="chatbubbles" />
+                                <Text>4 Comments</Text>
+                            </Button>
+                        </Body>
+                        <Right>
+                            <Text>{user.timeAdded}</Text>
+                            <Text>{user.dateAdded}</Text>
+                        </Right>
                     </CardItem>
-                    <CardItem>
+                    {file.descriptor !== '' &&
+                    <Accordion dataArray={description} expanded={1}/>}
+                </Card>
+        </Container>
+    );
+};
+
+/*<CardItem>
                         <Right>
                             <Button style={{backgroundColor: 'lightgray'}} title={''} onPress={()=>{
                                 if (color === 'gray'){
@@ -107,11 +114,6 @@ const Single = (props) => {
                                 <Icon style={{color: color, fontSize: 30}} name='heart' />
                             </Button>
                         </Right>
-                    </CardItem>
-                </Card>
-            </Content>
-        </Container>
-    );
-};
+                    </CardItem>*/
 
 export default Single;

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
     Container,
-    Header,
     Body,
     Title,
     Content,
@@ -92,10 +91,7 @@ const Login = (props) => {
 
     return (
         <Container>
-            <Header>
-                <Body><Title>MyApp</Title></Body>
-            </Header>
-            <Content>
+            <Content style={{marginTop:'10%'}}>
                 {/* login form */}
                 {toggleForm &&
                 <Form>
@@ -119,12 +115,12 @@ const Login = (props) => {
                             onChangeText={handlePasswordChange}
                         />
                     </Item>
-                    <Button full onPress={()=>{
+                    <Button block success onPress={()=>{
                         signInAsync();
                     }} title=''>
                         <Text>Sign in!</Text>
                     </Button>
-                    <Button dark full onPress={() => {
+                    <Button dark block onPress={() => {
                         setToggleForm(false);
                     }} title=''>
                         <Text>or Register</Text>
@@ -201,10 +197,10 @@ const Login = (props) => {
                             error={errors.confirmPassword}
                         />
                     </Item>
-                    <Button full onPress={registerAsync} title=''>
+                    <Button success block onPress={registerAsync} title=''>
                         <Text>Register!</Text>
                     </Button>
-                    <Button dark full onPress={() => {
+                    <Button dark block onPress={() => {
                         setToggleForm(true);
                     }} title=''>
                         <Text>or Login</Text>

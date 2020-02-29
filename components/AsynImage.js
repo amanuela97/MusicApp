@@ -21,7 +21,7 @@ export const AsyncImage = (props) => {
 
     return (
         <Container
-            style={style}>
+            style={style} >
 
             <Image
                 square

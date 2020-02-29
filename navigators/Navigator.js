@@ -11,6 +11,8 @@ import Login from '../views/Login';
 import Upload from '../views/Upload'
 import MyFiles from '../views/MyFiles.js';
 import Modify from "../views/Modify";
+import Launch from "../views/Launch";
+import Info from "../views/Info";
 
 const TabNavigator = createBottomTabNavigator(
     {
@@ -27,6 +29,7 @@ const TabNavigator = createBottomTabNavigator(
                     iconName = 'home';
                 } else if (routeName === 'Profile') {
                     iconName = 'person';
+
                 } else if (routeName === 'Upload') {
                     iconName = 'cloud-upload';
                 }
@@ -53,7 +56,7 @@ TabNavigator.navigationOptions = ({navigation}) => {
 };
 
 
-const StackNavigator = createStackNavigator(
+const AppStack = createStackNavigator(
     {
         Home: {
             screen: TabNavigator,
@@ -70,8 +73,26 @@ const StackNavigator = createStackNavigator(
         MyFiles: {
             screen: MyFiles,
         },
+        Info: {
+          screen: Info,
+        },
         Modify: {
           screen: Modify,
+        },
+
+    },
+);
+
+const AuthStack = createStackNavigator(
+    {
+        Launch: {
+            screen: Launch,
+            navigationOptions: {
+                headerShown: false,
+            },
+        },
+        Mussy: {
+            screen: Login,
         },
     },
 );
@@ -79,8 +100,8 @@ const StackNavigator = createStackNavigator(
 const Navigator = createSwitchNavigator(
     {
         AuthLoading: AuthLoading,
-        App: StackNavigator,
-        Auth: Login,
+        App: AppStack,
+        Auth: AuthStack,
     },
     {
         initialRouteName: 'AuthLoading',

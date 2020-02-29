@@ -2,23 +2,27 @@ import {apiUrl} from "../constants/UrlConst";
 
 const getUserMedia = async (token) => {
     console.log('getUserMedia');
+    try {
         const json = await fetchGET('media/user', '', token);
-        return await Promise.all(json.map( async (item) => {
-             return await fetchGET('media' , item.file_id).catch( error => {
-                 console.log(error);
+        json.reverse();
+        return await Promise.all(json.map(async (item) => {
+            return await fetchGET('media', item.file_id).catch(error => {
+                console.log(error);
             })
         }));
+    }catch (e) {
+        console.log('error msg from getUserMedia', e.message);
+    }
 };
 
 const getAllMedia = async () => {
     console.log('getAllMedia');
     try {
-        const json = await fetchGET('media/all');
-        const filesArray = json.files;
-        filesArray.reverse();
-        filesArray.splice(7);
-        return await Promise.all(filesArray.map(async (item) => {
-            return await fetchGET('media' , item.file_id);
+        const json = await fetchGET('tags','mussy');
+        json.reverse();
+        json.splice(5);
+        return await Promise.all(json.map(async (item) => {
+                return await fetchGET('media', item.file_id)
         }));
     } catch (e) {
         console.log('error msg from getAllMedia', e.message);
