@@ -86,6 +86,36 @@ const ListItem = (props) => {
                                 <Text note>{user.userData.username}</Text>
                             </Body>
                         </Left>
+                        {props.mode === 'myFiles' &&
+                        <Right>
+                            <TouchableOpacity>
+                                <Button warning transparent  onPress={()=> props.navigation.push('Modify', {fileData: props.singleMedia})} title=''>
+                                    <Icon
+                                        style={{fontSize: 25}}
+                                        active
+                                        name='create'/>
+                                </Button>
+                                <Button
+                                    danger
+                                    transparent
+                                    onPress={async () => {
+                                        const token = await AsyncStorage.getItem('userToken');
+                                        const del = await fetchDelete('media', props.singleMedia.file_id,
+                                            token);
+                                        console.log('delete', del);
+                                        if(del.message){
+                                            props.getMedia();
+                                        }
+                                    }}
+                                    title=''>
+                                    <Icon
+                                        style={{fontSize: 25}}
+                                        active
+                                        name='trash'/>
+                                </Button>
+                            </TouchableOpacity>
+                        </Right>
+                            }
                     </CardItem>
                     <TouchableOpacity onPress={()=>{props.navigation.push('Single', {
                         file: props.singleMedia,

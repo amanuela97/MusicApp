@@ -11,7 +11,6 @@ const Home = (props) => {
         <Container>
             <List navigation={navigation} mode='all'/>
         </Container>
-
     );
 };
 

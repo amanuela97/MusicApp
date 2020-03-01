@@ -17,9 +17,9 @@ import Info from "../views/Info";
 const TabNavigator = createBottomTabNavigator(
     {
         Home,
-        Upload,
         Profile,
     },
+
     {
         defaultNavigationOptions: ({navigation}) => ({
             tabBarIcon: () => {
@@ -30,8 +30,6 @@ const TabNavigator = createBottomTabNavigator(
                 } else if (routeName === 'Profile') {
                     iconName = 'person';
 
-                } else if (routeName === 'Upload') {
-                    iconName = 'cloud-upload';
                 }
                 // You can return any component that you like here!
                 return <Icon
@@ -48,10 +46,15 @@ const TabNavigator = createBottomTabNavigator(
 
 TabNavigator.navigationOptions = ({navigation}) => {
     const {routeName} = navigation.state.routes[navigation.state.index];
+    let header = true;
 
+    if(routeName === 'Profile'){
+        header = false;
+    }
     // You can do whatever you like here to pick the title based on the route name
     return {
         headerTitle: routeName,
+        headerShown: header,
     };
 };
 
@@ -79,7 +82,9 @@ const AppStack = createStackNavigator(
         Modify: {
           screen: Modify,
         },
-
+        Upload:{
+            screen: Upload,
+        }
     },
 );
 
