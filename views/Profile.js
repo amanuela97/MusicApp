@@ -22,7 +22,6 @@ const Profile = (props) => {
             // eslint-disable-next-line max-len
             const uData = JSON.parse(userFromStorage);
             const avatarPic = await fetchGET('tags', 'avatar_' + uData.user_id);
-            console.log(avatarPic);
             //checking if user has an existing profile picture. if not add a placeholder image
             if(avatarPic[0] !== undefined){
                 avatar = avatarPic[0].filename;

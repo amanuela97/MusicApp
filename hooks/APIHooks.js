@@ -7,7 +7,7 @@ const getUserMedia = async (token) => {
         json.reverse();
         return await Promise.all(json.map(async (item) => {
             return await fetchGET('media', item.file_id).catch(error => {
-                console.log(error);
+                console.log(error + 'error in get user media');
             })
         }));
     }catch (e) {
@@ -94,7 +94,7 @@ const fetchDelete = async (endpoint = '', param = '', token = '') => {
             'x-access-token': token,
         },
     };
-    const response = await fetch(apiUrl + endpoint + '/' + params,
+    const response = await fetch(apiUrl + endpoint + '/' + param,
         fetchOptions);
     if (!response.ok) {
         throw new Error('fetchDelete error: ' + response.status);

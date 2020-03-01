@@ -2,14 +2,13 @@ import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {ListItem as ListContainer, Thumbnail, Text, Left, Body, Right, Button, Icon, CardItem, Card, Content} from "native-base";
 import {AsyncStorage, Image, TouchableOpacity} from 'react-native';
-import {fetchDelete} from '../hooks/APIHooks.js';
 import {mediaURL} from "../constants/UrlConst";
-import {AsyncImage} from "./AsynImage";
-import {fetchGET} from "../hooks/APIHooks";
+import {fetchGET, fetchPOST, fetchDelete} from "../hooks/APIHooks";
 
 
 const ListItem = (props) => {
-
+    const [color, setColor] = useState('gray');
+    const [likes, setLikes] = useState(0);
     const [user, setUser] = useState({
         userData: {},
         token: '',
@@ -28,10 +27,25 @@ const ListItem = (props) => {
 
             //fetching user info. Also fetching profile picture and file cover if it has been set
             let param = props.singleMedia.user_id;
+            const logged = await AsyncStorage.getItem('user');
+            const loggedUser = JSON.parse(logged);
             const userToken = await AsyncStorage.getItem('userToken');
             const user = await fetchGET('users', param, userToken);
             const avatarPic = await fetchGET('tags', 'avatar_' + param);
             const fileCover = await fetchGET('tags', 'cover_' + props.singleMedia.file_id);
+
+            //set the number of favourites or likes
+            const numOfLikes = await fetchGET('favourites/file', props.singleMedia.file_id, userToken);
+            let num = 0;
+            if(numOfLikes.length > 0){
+                numOfLikes.forEach((like)=>{
+                    num++;
+                    if(like.user_id === loggedUser.user_id){
+                        setColor('red');
+                    }
+                });
+            }
+            setLikes(num);
 
             //setting up the date and time file was added
             date = props.singleMedia.time_added.slice(0,10);
@@ -65,9 +79,30 @@ const ListItem = (props) => {
         }
     };
 
+    const updateLikesColor = async () => {
+        try {
+            let id = props.singleMedia.file_id;
+            let data = {
+                "file_id": props.singleMedia.file_id,
+            };
+            if(color === 'gray') {
+                const like = await fetchPOST('favourites',data, user.token);
+                console.log(like);
+            }else{
+                const dislike = await fetchDelete('favourites/file',id, user.token);
+                console.log(dislike);
+            }
+            let result = color === 'gray' ? 'red' : 'gray';
+            setColor(result);
+        } catch (e) {
+            console.log('Profile error: ', e.message);
+        }
+    };
+
+
     useEffect(() => {
         userInfo();
-    }, []);
+    },[likes,color]);
 
     return (
         <ListContainer>
@@ -120,6 +155,8 @@ const ListItem = (props) => {
                     <TouchableOpacity onPress={()=>{props.navigation.push('Single', {
                         file: props.singleMedia,
                         userData: user,
+                        heartColor: color,
+                        likes: likes,
                     });
                     }}>
                         <CardItem cardBody>
@@ -135,15 +172,18 @@ const ListItem = (props) => {
                      </TouchableOpacity>
                     <CardItem>
                         <Left>
-                            <Button transparent>
-                                <Icon active name="thumbs-up" />
-                                <Text>12 Likes</Text>
+                            <Button transparent  title='' onPress={updateLikesColor}>
+                                <Icon style={{fontSize: 25, color: color}}
+                                      active name="heart" />
+                                <Text>{likes} Likes</Text>
                             </Button>
                         </Left>
                         <Body>
                             <Button transparent>
-                                <Icon active name="chatbubbles" />
-                                <Text>4 Comments</Text>
+                                <Icon
+                                    style={{fontSize: 25}}
+                                    active name="chatbubbles" />
+                                    <Text>4 Comments</Text>
                             </Button>
                         </Body>
                         <Right>

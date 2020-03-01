@@ -9,7 +9,6 @@ import {mediaURL} from "../constants/UrlConst";
 const {height, width} = Dimensions.get('window');
 
 const Single = (props) => {
-    const [color, setColor] = useState('gray');
     const { navigation } = props;
     let user = navigation.getParam('userData', 'default value');
     let file = navigation.getParam('file', 'default value');
@@ -17,21 +16,6 @@ const Single = (props) => {
     const description = [
         { title: Title, content: file.description },
     ];
-
-
-    const favourites = async () => {
-        try {
-            let param = navigation.getParam('fileId', 'default value');
-            let data = {
-                "file_id": param,
-            };
-            const favour = await fetchPOST('favourites',data, user.token);
-            console.log(favour);
-        } catch (e) {
-            console.log('Profile error: ', e.message);
-        }
-    };
-
 
     return (
         <Container>
@@ -79,6 +63,7 @@ const Single = (props) => {
                     <CardItem>
                         <Left>
                             <Button transparent>
+                                style={{fontSize: 25, color: color}}
                                 <Icon active name="thumbs-up" />
                                 <Text>12 Likes</Text>
                             </Button>
@@ -100,20 +85,5 @@ const Single = (props) => {
         </Container>
     );
 };
-
-/*<CardItem>
-                        <Right>
-                            <Button style={{backgroundColor: 'lightgray'}} title={''} onPress={()=>{
-                                if (color === 'gray'){
-                                    favourites();
-                                    setColor('red');
-                                }else{
-                                    setColor('gray');
-                                }
-                            }}>
-                                <Icon style={{color: color, fontSize: 30}} name='heart' />
-                            </Button>
-                        </Right>
-                    </CardItem>*/
 
 export default Single;

@@ -1,6 +1,6 @@
 import React from 'react';
 import {AsyncStorage} from 'react-native';
-import {Text, CardItem, Card, Content, Container, Body, Icon, Left, Right, Button} from 'native-base';
+import {Text, CardItem, Card, Content, Container, Body, Button} from 'native-base';
 
 
 
