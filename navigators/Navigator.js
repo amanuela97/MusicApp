@@ -77,10 +77,10 @@ const AppStack = createStackNavigator(
             screen: MyFiles,
         },
         Info: {
-          screen: Info,
+            screen: Info,
         },
         Modify: {
-          screen: Modify,
+            screen: Modify,
         },
         Upload:{
             screen: Upload,

@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import {ListItem as ListContainer, Thumbnail, Text, Left, Body, Right, Button, Icon, CardItem, Card, Content} from "native-base";
 import {AsyncStorage, Image, TouchableOpacity} from 'react-native';
 import {mediaURL} from "../constants/UrlConst";
-import {fetchGET, fetchPOST, fetchDelete} from "../hooks/APIHooks";
+import {fetchGET, fetchDelete} from "../hooks/APIHooks";
+import useLikesHooks from "../hooks/LikesHooks";
 
 
 const ListItem = (props) => {
-    const [color, setColor] = useState('gray');
-    const [likes, setLikes] = useState(0);
     const [user, setUser] = useState({
         userData: {},
         token: '',
@@ -17,6 +16,7 @@ const ListItem = (props) => {
         timeAdded: '',
         cover: '',
     });
+    const {updateLikesCount,updateLikesColor,likes,color} = useLikesHooks();
 
     const userInfo = async () => {
         try {
@@ -27,25 +27,10 @@ const ListItem = (props) => {
 
             //fetching user info. Also fetching profile picture and file cover if it has been set
             let param = props.singleMedia.user_id;
-            const logged = await AsyncStorage.getItem('user');
-            const loggedUser = JSON.parse(logged);
             const userToken = await AsyncStorage.getItem('userToken');
             const user = await fetchGET('users', param, userToken);
             const avatarPic = await fetchGET('tags', 'avatar_' + param);
             const fileCover = await fetchGET('tags', 'cover_' + props.singleMedia.file_id);
-
-            //set the number of favourites or likes
-            const numOfLikes = await fetchGET('favourites/file', props.singleMedia.file_id, userToken);
-            let num = 0;
-            if(numOfLikes.length > 0){
-                numOfLikes.forEach((like)=>{
-                    num++;
-                    if(like.user_id === loggedUser.user_id){
-                        setColor('red');
-                    }
-                });
-            }
-            setLikes(num);
 
             //setting up the date and time file was added
             date = props.singleMedia.time_added.slice(0,10);
@@ -79,29 +64,32 @@ const ListItem = (props) => {
         }
     };
 
-    const updateLikesColor = async () => {
+    const deleteFile = async ()=> {
         try {
-            let id = props.singleMedia.file_id;
-            let data = {
-                "file_id": props.singleMedia.file_id,
-            };
-            if(color === 'gray') {
-                const like = await fetchPOST('favourites',data, user.token);
-                console.log(like);
+            if (user.cover !== 'noCover') {
+                const delete_file = await fetchDelete('media', props.singleMedia.file_id,user.token);
+                const delete_cover = await fetchDelete('media', user.cover, user.token);
+                console.log('delete_cover', delete_file);
+                console.log('delete', delete_cover);
+                if (delete_file.message && delete_cover.message) {
+                    props.getMedia();
+                }
             }else{
-                const dislike = await fetchDelete('favourites/file',id, user.token);
-                console.log(dislike);
+                const delete_file = await fetchDelete('media', props.singleMedia.file_id,user.token);
+                console.log('delete_cover', delete_file);
+                if (delete_file.message) {
+                    props.getMedia();
+                }
             }
-            let result = color === 'gray' ? 'red' : 'gray';
-            setColor(result);
-        } catch (e) {
-            console.log('Profile error: ', e.message);
+        }catch (e) {
+            console.log(e.message);
         }
     };
 
 
-    useEffect(() => {
-        userInfo();
+    useEffect( () => {
+         userInfo();
+         updateLikesCount(props.singleMedia.file_id, user.token);
     },[likes,color]);
 
     return (
@@ -111,10 +99,10 @@ const ListItem = (props) => {
                     <CardItem>
                         <Left>
                             <TouchableOpacity>
-                            {user.userProfile !== 'noPic' &&
-                            <Thumbnail source={{uri: mediaURL + user.userProfile}} />}
-                            {user.userProfile === 'noPic' &&
-                            <Thumbnail source={require('../assets/background.png')} />}
+                                {user.userProfile !== 'noPic' &&
+                                <Thumbnail source={{uri: mediaURL + user.userProfile}} />}
+                                {user.userProfile === 'noPic' &&
+                                <Thumbnail source={require('../assets/background.png')} />}
                             </TouchableOpacity>
                             <Body>
                                 <Text>{props.singleMedia.title}</Text>
@@ -134,13 +122,7 @@ const ListItem = (props) => {
                                     danger
                                     transparent
                                     onPress={async () => {
-                                        const token = await AsyncStorage.getItem('userToken');
-                                        const del = await fetchDelete('media', props.singleMedia.file_id,
-                                            token);
-                                        console.log('delete', del);
-                                        if(del.message){
-                                            props.getMedia();
-                                        }
+                                       await deleteFile()
                                     }}
                                     title=''>
                                     <Icon
@@ -150,7 +132,7 @@ const ListItem = (props) => {
                                 </Button>
                             </TouchableOpacity>
                         </Right>
-                            }
+                        }
                     </CardItem>
                     <TouchableOpacity onPress={()=>{props.navigation.push('Single', {
                         file: props.singleMedia,
@@ -160,32 +142,26 @@ const ListItem = (props) => {
                     });
                     }}>
                         <CardItem cardBody>
-                                {props.singleMedia.media_type === 'video' && user.cover === 'noCover' &&
-                                <Image source={{uri: mediaURL + props.singleMedia.screenshot}} style={{height: 200, width: null, flex: 1}}/>}
-                                { props.singleMedia.media_type === 'video' && user.cover !== 'noCover' &&
-                                <Image source={{uri: mediaURL + user.cover}} style={{height: 200, width: null, flex: 1}}/>}
-                                {props.singleMedia.media_type === 'audio' && user.cover === 'noCover' &&
-                                <Image source={require('../assets/background.png')} style={{height: 200, width: null, flex: 1}}/>}
-                                {props.singleMedia.media_type === 'audio' && user.cover !== 'noCover' &&
-                                <Image source={{uri: mediaURL + user.cover}} style={{height: 200, width: null, flex: 1}}/>}
+                            {props.singleMedia.media_type === 'video' && user.cover === 'noCover' &&
+                            <Image source={{uri: mediaURL + props.singleMedia.screenshot}} style={{height: 200, width: null, flex: 1}}/>}
+                            { props.singleMedia.media_type === 'video' && user.cover !== 'noCover' &&
+                            <Image source={{uri: mediaURL + user.cover}} style={{height: 200, width: null, flex: 1}}/>}
+                            {props.singleMedia.media_type === 'audio' && user.cover === 'noCover' &&
+                            <Image source={require('../assets/background.png')} style={{height: 200, width: null, flex: 1}}/>}
+                            {props.singleMedia.media_type === 'audio' && user.cover !== 'noCover' &&
+                            <Image source={{uri: mediaURL + user.cover}} style={{height: 200, width: null, flex: 1}}/>}
                         </CardItem>
-                     </TouchableOpacity>
+                    </TouchableOpacity>
                     <CardItem>
                         <Left>
-                            <Button transparent  title='' onPress={updateLikesColor}>
+                            <Button transparent  title='' onPress={ async ()=>{
+                                await updateLikesColor(props.singleMedia.file_id, user.token);
+                            }}>
                                 <Icon style={{fontSize: 25, color: color}}
                                       active name="heart" />
                                 <Text>{likes} Likes</Text>
                             </Button>
                         </Left>
-                        <Body>
-                            <Button transparent>
-                                <Icon
-                                    style={{fontSize: 25}}
-                                    active name="chatbubbles" />
-                                    <Text>4 Comments</Text>
-                            </Button>
-                        </Body>
                         <Right>
                             <Text>{user.timeAdded}</Text>
                             <Text>{user.dateAdded}</Text>

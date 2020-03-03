@@ -1,14 +1,30 @@
-import React, {useState} from 'react';
-import {Text, CardItem, Card, Content, Container, Body, Icon, Left, Right, Button, Thumbnail, Accordion} from 'native-base';
+import React, {useEffect,useState} from 'react';
+import {
+    Text,
+    CardItem,
+    Card,
+    Container,
+    Body,
+    Icon,
+    Left,
+    Right,
+    Button,
+    Thumbnail,
+    Accordion,
+    Content
+} from 'native-base';
 import {Dimensions, TouchableOpacity} from 'react-native';
-import {AsyncImage} from '../components/AsynImage.js';
 import { Video } from 'expo-av';
-import {fetchPOST} from "../hooks/APIHooks";
 import {mediaURL} from "../constants/UrlConst";
+import useLikesHooks from "../hooks/LikesHooks";
+import { Audio } from "expo-av";
 
 const {height, width} = Dimensions.get('window');
 
 const Single = (props) => {
+    const {updateLikesCount,updateLikesColor,likes,color} = useLikesHooks();
+    const [soundObject, setSoundObject] = useState(new Audio.Sound());
+    const [playing,setPlaying] = useState(false);
     const { navigation } = props;
     let user = navigation.getParam('userData', 'default value');
     let file = navigation.getParam('file', 'default value');
@@ -16,6 +32,35 @@ const Single = (props) => {
     const description = [
         { title: Title, content: file.description },
     ];
+
+    const startPausePlay = async () => {
+        try {
+            // Checking if now playing music, if yes stop that
+            if (playing) {
+                await soundObject.pauseAsync();
+                setPlaying(!playing);
+            } else {
+                // Checking if item already loaded, if yes just play, else load music before play
+                if (soundObject._loaded) {
+                    await soundObject.playAsync();
+                } else {
+                    const path = {
+                            uri: mediaURL + file.filename,
+                            };
+                    await soundObject.loadAsync(path);
+                    await soundObject.playAsync();
+                    console.log('hello');
+                }
+                setPlaying(!playing);
+            }
+        }catch (e) {
+            console.log('startPlay ' ,e);
+        }
+    };
+
+    useEffect( () => {
+        updateLikesCount(file.file_id, user.token);
+    },[likes,color]);
 
     return (
         <Container>
@@ -40,13 +85,15 @@ const Single = (props) => {
                     </Body>
                     <CardItem>
                         { file.media_type === 'audio' &&
-                        <AsyncImage
-                            style={{height: 320, width: 320}}
-                            source={{
-                                uri: ''
-                            }}
-                            placeholderColor='white'
-                        />}
+                        <Body style={{flex:1, alignItems:'center', padding:'5%'}}>
+                            <Text style={{paddingBottom: '5%'}}>{file.title}</Text>
+                            <Button small  title='' onPress={async () =>{
+                                await startPausePlay();
+                            }}>
+                                <Icon name={playing ? 'pause' : 'play'}/>
+                            </Button>
+                        </Body>
+                        }
                         {file.media_type === 'video' &&
                         <Video
                             source={{ uri: mediaURL + file.filename }}
@@ -62,10 +109,12 @@ const Single = (props) => {
                     </CardItem>
                     <CardItem>
                         <Left>
-                            <Button transparent>
-                                style={{fontSize: 25, color: color}}
-                                <Icon active name="thumbs-up" />
-                                <Text>12 Likes</Text>
+                            <Button transparent  title='' onPress={ async ()=>{
+                                await updateLikesColor(file.file_id, user.token);
+                            }}>
+                                <Icon style={{fontSize: 25, color: color}}
+                                      active name="heart" />
+                                <Text>{likes} Likes</Text>
                             </Button>
                         </Left>
                         <Body>
