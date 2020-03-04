@@ -31,7 +31,6 @@ const ListItem = (props) => {
             const user = await fetchGET('users', param, userToken);
             const avatarPic = await fetchGET('tags', 'avatar_' + param);
             const fileCover = await fetchGET('tags', 'cover_' + props.singleMedia.file_id);
-
             //setting up the date and time file was added
             date = props.singleMedia.time_added.slice(0,10);
             time = props.singleMedia.time_added.slice(11,19);
@@ -69,14 +68,14 @@ const ListItem = (props) => {
             if (user.cover !== 'noCover') {
                 const delete_file = await fetchDelete('media', props.singleMedia.file_id,user.token);
                 const delete_cover = await fetchDelete('media', user.cover, user.token);
-                console.log('delete_cover', delete_file);
-                console.log('delete', delete_cover);
+                console.log('deleted_cover', delete_file);
+                console.log('deleted_file', delete_cover);
                 if (delete_file.message && delete_cover.message) {
                     props.getMedia();
                 }
             }else{
                 const delete_file = await fetchDelete('media', props.singleMedia.file_id,user.token);
-                console.log('delete_cover', delete_file);
+                console.log('deleted_file', delete_file);
                 if (delete_file.message) {
                     props.getMedia();
                 }
@@ -90,7 +89,7 @@ const ListItem = (props) => {
     useEffect( () => {
          userInfo();
          updateLikesCount(props.singleMedia.file_id, user.token);
-    },[likes,color]);
+    },[likes,color,props.navigation.navigate]);
 
     return (
         <ListContainer>
@@ -103,6 +102,7 @@ const ListItem = (props) => {
                                 <Thumbnail source={{uri: mediaURL + user.userProfile}} />}
                                 {user.userProfile === 'noPic' &&
                                 <Thumbnail source={require('../assets/background.png')} />}
+
                             </TouchableOpacity>
                             <Body>
                                 <Text>{props.singleMedia.title}</Text>
@@ -121,8 +121,8 @@ const ListItem = (props) => {
                                 <Button
                                     danger
                                     transparent
-                                    onPress={async () => {
-                                       await deleteFile()
+                                    onPress={() => {
+                                       deleteFile()
                                     }}
                                     title=''>
                                     <Icon
@@ -156,6 +156,7 @@ const ListItem = (props) => {
                         <Left>
                             <Button transparent  title='' onPress={ async ()=>{
                                 await updateLikesColor(props.singleMedia.file_id, user.token);
+                                await updateLikesCount(props.singleMedia.file_id, user.token);
                             }}>
                                 <Icon style={{fontSize: 25, color: color}}
                                       active name="heart" />

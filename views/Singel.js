@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from 'react';
+import React, {useEffect} from 'react';
 import {
     Text,
     CardItem,
@@ -11,20 +11,18 @@ import {
     Button,
     Thumbnail,
     Accordion,
-    Content
 } from 'native-base';
 import {Dimensions, TouchableOpacity} from 'react-native';
 import { Video } from 'expo-av';
 import {mediaURL} from "../constants/UrlConst";
 import useLikesHooks from "../hooks/LikesHooks";
-import { Audio } from "expo-av";
+import useAudioPlayer from "../components/AudioPlayer";
 
 const {height, width} = Dimensions.get('window');
 
 const Single = (props) => {
     const {updateLikesCount,updateLikesColor,likes,color} = useLikesHooks();
-    const [soundObject, setSoundObject] = useState(new Audio.Sound());
-    const [playing,setPlaying] = useState(false);
+    const {playing,startPausePlay} = useAudioPlayer();
     const { navigation } = props;
     let user = navigation.getParam('userData', 'default value');
     let file = navigation.getParam('file', 'default value');
@@ -33,30 +31,6 @@ const Single = (props) => {
         { title: Title, content: file.description },
     ];
 
-    const startPausePlay = async () => {
-        try {
-            // Checking if now playing music, if yes stop that
-            if (playing) {
-                await soundObject.pauseAsync();
-                setPlaying(!playing);
-            } else {
-                // Checking if item already loaded, if yes just play, else load music before play
-                if (soundObject._loaded) {
-                    await soundObject.playAsync();
-                } else {
-                    const path = {
-                            uri: mediaURL + file.filename,
-                            };
-                    await soundObject.loadAsync(path);
-                    await soundObject.playAsync();
-                    console.log('hello');
-                }
-                setPlaying(!playing);
-            }
-        }catch (e) {
-            console.log('startPlay ' ,e);
-        }
-    };
 
     useEffect( () => {
         updateLikesCount(file.file_id, user.token);
@@ -88,7 +62,7 @@ const Single = (props) => {
                         <Body style={{flex:1, alignItems:'center', padding:'5%'}}>
                             <Text style={{paddingBottom: '5%'}}>{file.title}</Text>
                             <Button small  title='' onPress={async () =>{
-                                await startPausePlay();
+                                await startPausePlay(file);
                             }}>
                                 <Icon name={playing ? 'pause' : 'play'}/>
                             </Button>

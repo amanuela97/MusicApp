@@ -19,15 +19,17 @@ import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import useUploadForm from '../hooks/UploadHooks';
 import {MediaContext} from '../contexts/MediaContext';
-import {validateField} from '../Utils/Validation';
+import validateField from '../Utils/Validation';
 import {uploadConstraints} from '../constants/ValidationConst';
+import {Video} from "expo-av";
 
 const deviceHeight = Dimensions.get('window').height;
 
 const Upload = (props) => {
     const {media, setMedia} = useContext(MediaContext);
-    const [image, setImage] = useState(null);
     const [send, setSend] = useState(false);
+    const [cover, setCover] = useState(null);
+    const [video, setVideo] = useState(null);
 
     const {
         handleTitleChange,
@@ -59,7 +61,8 @@ const Upload = (props) => {
     const reset = () => {
         setErrors({});
         setInputs({});
-        setImage(null);
+        setCover(null);
+        setVideo(null);
     };
 
     const getPermissionAsync = async () => {
@@ -86,9 +89,13 @@ const Upload = (props) => {
 
         console.log(result);
 
-        if (!result.cancelled) {
-            setImage(result);
+        if (!result.cancelled && result.type === 'image') {
+            setCover(result);
+        }else if(!result.cancelled && result.type === 'video'){
+            setVideo(result);
         }
+        validate('title', inputs.title);
+        validate('description', inputs.description);
     };
 
     const handleTitle = (text) => {
@@ -101,14 +108,13 @@ const Upload = (props) => {
         validate('description', text);
     };
 
-    const upload = () => {
+    const upload = async () => {
         console.log('reg field errors', errors);
-        handleUpload(image, props.navigation, setMedia);
+        await handleUpload(cover,video, props.navigation, setMedia);
         reset();
     };
 
     const checkErrors = () => {
-        console.log('errors', errors);
         if (errors.title !== undefined ||
             errors.description !== undefined) {
             setSend(false);
@@ -145,15 +151,29 @@ const Upload = (props) => {
                             error={errors.description}
                         />
                     </Item>
-                    {image &&
-                    <Image source={{uri: image.uri}}
-                           style={{width: '100%', height: deviceHeight / 3}}/>
-                    }
+                    {video !== null &&
+                    <Video
+                        source={{ uri: video.uri }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode="cover"
+                        shouldPlay={false}
+                        isLooping={false}
+                        useNativeControls={true}
+                        style={{ width: '100%', height: deviceHeight/3 }}
+                    />}
+                    {cover !== null  &&
+                    <Image source={{uri: cover.uri}}
+                           style={{width: '100%', height: deviceHeight / 3}}/>}
                     <Button full onPress={pickImage} title=''>
                         <Text>Select file</Text>
                     </Button>
-                    {image && send &&
-                    <Button full onPress={upload} title=''>
+                    <Button info full onPress={pickImage} title=''>
+                        <Text>Select cover</Text>
+                    </Button>
+                    {video !== null && send &&
+                    <Button success full onPress={upload} title=''>
                         <Text>Upload</Text>
                     </Button>
                     }
@@ -163,6 +183,7 @@ const Upload = (props) => {
                         onPress={reset} title=''>
                         <Text>Reset form</Text>
                     </Button>
+
                 </Form>
             )}
         </Content>

@@ -41,7 +41,7 @@ const Profile = (props) => {
 
     useEffect(() => {
         userToState();
-    }, []);
+    }, [props.navigation]);
 
 
     return (

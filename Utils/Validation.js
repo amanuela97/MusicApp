@@ -12,4 +12,4 @@ const validateField = (attr, constraints) => {
     return valid;
 };
 
-export {validateField};
+export default validateField;
