@@ -31,7 +31,7 @@ export const AsyncImage = (props) => {
                     style,
                     {
                         position: 'absolute',
-                        resizeMode: 'contain'
+                        resizeMode: 'cover'
                     }
                 ]}
                 onLoad={_onLoad} />

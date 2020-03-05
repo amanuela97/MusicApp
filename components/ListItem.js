@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {ListItem as ListContainer, Thumbnail, Text, Left, Body, Right, Button, Icon, CardItem, Card, Content} from "native-base";
-import {AsyncStorage, Image, TouchableOpacity} from 'react-native';
+import {AsyncStorage, TouchableOpacity} from 'react-native';
 import {mediaURL} from "../constants/UrlConst";
 import {fetchGET, fetchDelete} from "../hooks/APIHooks";
 import useLikesHooks from "../hooks/LikesHooks";
+import {AsyncImage} from '../components/AsynImage';
 
 
 const ListItem = (props) => {
@@ -89,7 +90,7 @@ const ListItem = (props) => {
     useEffect( () => {
          userInfo();
          updateLikesCount(props.singleMedia.file_id, user.token);
-    },[likes,color,props.navigation.navigate]);
+    },[likes,color]);
 
     return (
         <ListContainer>
@@ -143,20 +144,19 @@ const ListItem = (props) => {
                     }}>
                         <CardItem cardBody>
                             {props.singleMedia.media_type === 'video' && user.cover === 'noCover' &&
-                            <Image source={{uri: mediaURL + props.singleMedia.screenshot}} style={{height: 200, width: null, flex: 1}}/>}
+                            <AsyncImage source={{uri: mediaURL + props.singleMedia.screenshot}} style={{height: 200, width: '100%', flex:1}}/>}
                             { props.singleMedia.media_type === 'video' && user.cover !== 'noCover' &&
-                            <Image source={{uri: mediaURL + user.cover}} style={{height: 200, width: null, flex: 1}}/>}
+                            <AsyncImage source={{uri: mediaURL + user.cover}} style={{height: 200, width: '100%', flex: 1}}/>}
                             {props.singleMedia.media_type === 'audio' && user.cover === 'noCover' &&
-                            <Image source={require('../assets/background.png')} style={{height: 200, width: null, flex: 1}}/>}
+                            <AsyncImage source={require('../assets/background.png')} style={{height: 200, width: '100%', flex: 1}}/>}
                             {props.singleMedia.media_type === 'audio' && user.cover !== 'noCover' &&
-                            <Image source={{uri: mediaURL + user.cover}} style={{height: 200, width: null, flex: 1}}/>}
+                            <AsyncImage source={{uri: mediaURL + user.cover}} style={{height: 200, width: '100%', flex: 1}}/>}
                         </CardItem>
                     </TouchableOpacity>
                     <CardItem>
                         <Left>
                             <Button transparent  title='' onPress={ async ()=>{
                                 await updateLikesColor(props.singleMedia.file_id, user.token);
-                                await updateLikesCount(props.singleMedia.file_id, user.token);
                             }}>
                                 <Icon style={{fontSize: 25, color: color}}
                                       active name="heart" />

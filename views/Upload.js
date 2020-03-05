@@ -10,7 +10,6 @@ import {
 
 import {
     Dimensions,
-    Image,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import FormTextInput from '../components/FormTextInput';
@@ -22,6 +21,7 @@ import {MediaContext} from '../contexts/MediaContext';
 import validateField from '../Utils/Validation';
 import {uploadConstraints} from '../constants/ValidationConst';
 import {Video} from "expo-av";
+import {AsyncImage} from '../components/AsynImage';
 
 const deviceHeight = Dimensions.get('window').height;
 
@@ -164,7 +164,7 @@ const Upload = (props) => {
                         style={{ width: '100%', height: deviceHeight/3 }}
                     />}
                     {cover !== null  &&
-                    <Image source={{uri: cover.uri}}
+                    <AsyncImage source={{uri: cover.uri}}
                            style={{width: '100%', height: deviceHeight / 3}}/>}
                     <Button full onPress={pickImage} title=''>
                         <Text>Select file</Text>

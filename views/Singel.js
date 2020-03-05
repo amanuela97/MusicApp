@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useState,useEffect} from 'react';
 import {
     Text,
     CardItem,
@@ -12,15 +12,18 @@ import {
     Thumbnail,
     Accordion,
 } from 'native-base';
+import Modal, { ModalContent, ModalTitle } from 'react-native-modals';
 import {Dimensions, TouchableOpacity} from 'react-native';
 import { Video } from 'expo-av';
 import {mediaURL} from "../constants/UrlConst";
 import useLikesHooks from "../hooks/LikesHooks";
 import useAudioPlayer from "../components/AudioPlayer";
+import Comment from "./Comments";
 
 const {height, width} = Dimensions.get('window');
 
 const Single = (props) => {
+    const [bottomModal, setBottomModal] = useState(false);
     const {updateLikesCount,updateLikesColor,likes,color} = useLikesHooks();
     const {playing,startPausePlay} = useAudioPlayer();
     const { navigation } = props;
@@ -34,7 +37,7 @@ const Single = (props) => {
 
     useEffect( () => {
         updateLikesCount(file.file_id, user.token);
-    },[likes,color]);
+    },[likes,color,bottomModal]);
 
     return (
         <Container>
@@ -92,9 +95,12 @@ const Single = (props) => {
                             </Button>
                         </Left>
                         <Body>
-                            <Button transparent>
+                            <Button transparent onPress={()=> {
+                                let result = bottomModal === false;
+                                setBottomModal(result);
+                            }} title=''>
                                 <Icon active name="chatbubbles" />
-                                <Text>4 Comments</Text>
+                                <Text>Comment</Text>
                             </Button>
                         </Body>
                         <Right>
@@ -102,9 +108,39 @@ const Single = (props) => {
                             <Text>{user.dateAdded}</Text>
                         </Right>
                     </CardItem>
-                    {file.descriptor !== '' &&
+                    {file.description !== '' &&
                     <Accordion dataArray={description} expanded={1}/>}
                 </Card>
+                <Modal.BottomModal
+                    visible={bottomModal}
+                    onHardwareBackPress={ async () => {
+                       await setBottomModal(false);
+                    }}
+                    onBackdropPress={() => {
+                        setBottomModal(false);
+                    }}
+                    height={0.75}
+                    width={1}
+                    onSwipeOut={() =>{
+                        setBottomModal(false);
+                    }}
+                    modalTitle={
+                        <ModalTitle
+                            title="Comments"
+                            hasTitleBar
+                        />
+                    }
+                >
+
+                            <ModalContent
+                                style={{
+                                    flex: 1,
+                                    backgroundColor: 'fff',
+                                }}
+                            >
+                                <Comment user={user} file={file}/>
+                            </ModalContent>
+                </Modal.BottomModal>
         </Container>
     );
 };
