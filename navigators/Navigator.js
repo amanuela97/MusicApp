@@ -13,10 +13,14 @@ import MyFiles from '../views/MyFiles.js';
 import Modify from "../views/Modify";
 import Launch from "../views/Launch";
 import Info from "../views/Info";
+import Favourites from "../views/Favourites";
+import Search from "../views/Search";
 
 const TabNavigator = createBottomTabNavigator(
     {
         Home,
+        Favourites,
+        Search,
         Profile,
     },
 
@@ -30,6 +34,10 @@ const TabNavigator = createBottomTabNavigator(
                 } else if (routeName === 'Profile') {
                     iconName = 'person';
 
+                }else if(routeName === 'Favourites'){
+                    iconName = 'heart';
+                }else {
+                    iconName = 'search';
                 }
                 // You can return any component that you like here!
                 return <Icon
@@ -48,7 +56,7 @@ TabNavigator.navigationOptions = ({navigation}) => {
     const {routeName} = navigation.state.routes[navigation.state.index];
     let header = true;
 
-    if(routeName === 'Profile'){
+    if(routeName === 'Profile' || routeName === 'Search'){
         header = false;
     }
     // You can do whatever you like here to pick the title based on the route name

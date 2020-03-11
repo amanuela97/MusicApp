@@ -9,6 +9,7 @@ import {TouchableOpacity} from "react-native";
 import {mediaURL} from "../constants/UrlConst";
 import {fetchGET,fetchPOST} from "../hooks/APIHooks";
 
+
 const Comment = (props) => {
     const [loading, setLoading] = useState(true);
     const [comments,setComments] = useState([]);
@@ -62,11 +63,11 @@ const Comment = (props) => {
 
     const handleCommentChange = (text) => {
         console.log('commentChangeDetected', text);
-        setInputs((inputs) => ({
+        setInputs((inputs) =>
+            ({
                 ...inputs,
                 comment: text,
-            }
-        ));
+            }));
     };
 
     useEffect(()=>{
@@ -77,25 +78,29 @@ const Comment = (props) => {
       <View>
           <Card style={{width: '100%'}}>
               <CardItem>
-                      <Item rounded >
-                          <Left>
-                              <Input
-                                  placeholder='comment'
-                                  onChangeText={handleCommentChange}
-                                  value={inputs.comment}
-                              />
-                          </Left>
-                          <Right>
-                              <Button
-                                  transparent
-                                  title=''
-                                  onPress={async ()=>{
-                                      await postComment();
-                                  }}>
-                                  <Text>Post</Text>
-                              </Button>
-                          </Right>
-                      </Item>
+                  <Item rounded >
+                      <Left>
+
+                          <Input
+                              autoCapitalize='none'
+                              value={inputs.comment}
+                              placeholder='comment'
+                              onChangeText={handleCommentChange}
+                          />
+                      </Left>
+                  </Item>
+                  <Item>
+                      <Right>
+                          <Button
+                              transparent
+                              title=''
+                              onPress={async ()=>{
+                                  await postComment();
+                              }}>
+                              <Text>Post</Text>
+                          </Button>
+                      </Right>
+                  </Item>
               </CardItem>
           </Card>
           {loading ? (

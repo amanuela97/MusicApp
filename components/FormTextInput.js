@@ -7,7 +7,7 @@ const FormTextInput = (props) => {
     const {error, ...otherProps} = props;
     return (
         <Content>
-            <Item>
+            <Item >
                 <Input
                     {...otherProps}
                 />

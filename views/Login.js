@@ -98,7 +98,7 @@ const Login = (props) => {
                     <Title>
                         <H2>Login</H2>
                     </Title>
-                    <Item>
+                    <Item rounded>
                         <FormTextInput
                             autoCapitalize='none'
                             value={inputs.username}
@@ -106,7 +106,7 @@ const Login = (props) => {
                             onChangeText={handleUsernameChange}
                         />
                     </Item>
-                    <Item>
+                    <Item rounded>
                         <FormTextInput
                             autoCapitalize='none'
                             value={inputs.password}

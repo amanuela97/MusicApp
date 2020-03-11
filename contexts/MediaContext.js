@@ -9,8 +9,9 @@ const mediaArray = [];
 export const MediaProvider = (props) => {
     const [media, setMedia] = useState(mediaArray);
     const [myMedia, setMyMedia] = useState(mediaArray);
+    const [fav, setFav] = useState(mediaArray);
     return (
-        <MediaContext.Provider value={{media, setMedia,myMedia, setMyMedia}}>
+        <MediaContext.Provider value={{media, setMedia,myMedia, setMyMedia,fav, setFav}}>
             {props.children}
         </MediaContext.Provider>
     );
