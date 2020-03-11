@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import PropTypes from 'prop-types';
 import {ListItem as ListContainer, Thumbnail, Text, Left, Body, Right, Button, Icon, CardItem, Card, Content} from "native-base";
 import {AsyncStorage, TouchableOpacity} from 'react-native';
@@ -6,6 +6,7 @@ import {mediaURL} from "../constants/UrlConst";
 import {fetchGET, fetchDelete} from "../hooks/APIHooks";
 import useLikesHooks from "../hooks/LikesHooks";
 import {AsyncImage} from '../components/AsynImage';
+
 
 
 const ListItem = (props) => {
@@ -16,6 +17,7 @@ const ListItem = (props) => {
         dateAdded: '',
         timeAdded: '',
         cover: '',
+        cover_id: '',
     });
     const {updateLikesCount,updateLikesColor,likes,color} = useLikesHooks();
 
@@ -25,6 +27,7 @@ const ListItem = (props) => {
             let date = '';
             let time = '';
             let cover = '';
+            let cover_id = '';
 
             //fetching user info. Also fetching profile picture and file cover if it has been set
             let param = props.singleMedia.user_id;
@@ -46,6 +49,7 @@ const ListItem = (props) => {
             //checking if user has an existing cover/thumbnail. if not add a placeholder image
             if(fileCover[0] !== undefined){
                 cover = fileCover[0].filename;
+                cover_id = fileCover[0].file_id;
             }else {
                 cover = 'noCover';
             }
@@ -58,6 +62,7 @@ const ListItem = (props) => {
                     dateAdded: date,
                     timeAdded: time,
                     cover: cover,
+                    cover_id: cover_id,
                 }));
         } catch (e) {
             console.log('Profile error: ', e.message);
@@ -67,18 +72,18 @@ const ListItem = (props) => {
     const deleteFile = async ()=> {
         try {
             if (user.cover !== 'noCover') {
-                const delete_file = await fetchDelete('media', props.singleMedia.file_id,user.token);
-                const delete_cover = await fetchDelete('media', user.cover, user.token);
+                const delete_file = await fetchDelete('media', props.singleMedia.file_id, user.token);
+                const delete_cover = await fetchDelete('media', user.cover_id, user.token);
                 console.log('deleted_cover', delete_file);
                 console.log('deleted_file', delete_cover);
                 if (delete_file.message && delete_cover.message) {
-                    props.getMedia();
+                    props.getMedia(props.mode);
                 }
             }else{
                 const delete_file = await fetchDelete('media', props.singleMedia.file_id,user.token);
                 console.log('deleted_file', delete_file);
                 if (delete_file.message) {
-                    props.getMedia();
+                    props.getMedia(props.mode);
                 }
             }
         }catch (e) {
@@ -122,8 +127,8 @@ const ListItem = (props) => {
                                 <Button
                                     danger
                                     transparent
-                                    onPress={() => {
-                                       deleteFile()
+                                    onPress={ () => {
+                                       deleteFile();
                                     }}
                                     title=''>
                                     <Icon

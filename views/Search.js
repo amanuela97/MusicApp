@@ -1,21 +1,12 @@
-import React, {useState} from "react";
-import {Container,Header, Item, Input, Icon, Button, Text,Content} from 'native-base';
-import FormTextInput from "../components/FormTextInput";
-import {get} from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import React from "react";
+import {Container,Header, Item, Input, Icon} from 'native-base';
 import List from "../components/List";
+import SearchHooks from '../hooks/SearchHooks';
 
 
 const Search = (props) => {
-    const [input,setInput] = useState('');
-
-    const handleSearchChange  = (text)=>{
-        console.log('handle search change', text);
-        setInput(text);
-    };
-
-    const getSearch = async ()=> {
-
-    };
+    const {navigation} = props;
+    const {input,handleSearchChange, handleSearch} =  SearchHooks();
 
     return (
         <Container style={{paddingTop: '6%'}}>
@@ -28,19 +19,16 @@ const Search = (props) => {
                         placeholder="Search"
                         onChangeText={handleSearchChange}
                         onSubmitEditing={( async () => {
-                            await getSearch();
+                            await handleSearch();
                         })}
                         multiline={false}
                     />
                     <Icon name="musical-note" />
                 </Item>
-                <Button transparent onPress='' title=''>
-                    <Text>Search</Text>
-                </Button>
             </Header>
-            <Content>
-
-            </Content>
+            <Container>
+                <List navigation={navigation} mode='search' />
+            </Container>
         </Container>
     );
 };

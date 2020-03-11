@@ -73,7 +73,7 @@ const useUploadForm = () => {
                             };
                             const tag2 = await fetchPOST('tags', coverTag, token);
                             if (tag2.message) {
-                                const data = getAllMedia();
+                                const data = await getAllMedia();
                                 setMedia(data);
                                 setLoading(false);
                                 navigation.push('Home');
@@ -103,7 +103,7 @@ const useUploadForm = () => {
                     };
                     const tag1 = await fetchPOST('tags', videoTag, token);
                     if (tag1.message){
-                        const data = getAllMedia();
+                        const data = await getAllMedia();
                         setMedia(data);
                         setLoading(false);
                         navigation.push('Home');

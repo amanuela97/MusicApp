@@ -73,6 +73,7 @@ const AppStack = createStackNavigator(
             screen: TabNavigator,
             navigationOptions: {
                 headerMode: 'none',
+                headerLeft: ()=>{},
             },
         },
         Single: {

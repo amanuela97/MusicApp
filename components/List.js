@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import {fetchGET} from "../hooks/APIHooks";
 
 const List = (props) => {
-    const {media, setMedia, myMedia, setMyMedia, fav, setFav} = useContext(MediaContext);
+    const {media, setMedia, myMedia, setMyMedia, fav, setFav, searchMedia} = useContext(MediaContext);
     const [loading, setLoading] = useState(true);
 
     const getMedia = async (mode) => {
@@ -65,7 +65,7 @@ const List = (props) => {
             <Spinner/>
             }
                 <BaseList
-                    dataArray={props.mode === 'all' ? media : (props.mode === 'fav' ? fav : myMedia)}
+                    dataArray={props.mode === 'all' ? media : (props.mode === 'fav' ? fav : (props.mode === 'myFiles' ? myMedia : searchMedia))}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({item}) =>
                         <ListItem
