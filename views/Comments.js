@@ -3,11 +3,12 @@ import {
     List as BaseList, ListItem as ListContainer,
     Spinner,
     View,
-    Left, Thumbnail, Body, Text, Card, CardItem, Item, Input, Right, Button
+    Left, Thumbnail, Body, Text,Item
 } from "native-base";
 import {TouchableOpacity} from "react-native";
 import {mediaURL} from "../constants/UrlConst";
 import {fetchGET,fetchPOST} from "../hooks/APIHooks";
+import FormTextInput from "../components/FormTextInput";
 
 
 const Comment = (props) => {
@@ -76,33 +77,18 @@ const Comment = (props) => {
 
     return(
       <View>
-          <Card style={{width: '100%'}}>
-              <CardItem>
-                  <Item rounded >
-                      <Left>
-
-                          <Input
-                              autoCapitalize='none'
-                              value={inputs.comment}
-                              placeholder='comment'
-                              onChangeText={handleCommentChange}
-                          />
-                      </Left>
-                  </Item>
-                  <Item>
-                      <Right>
-                          <Button
-                              transparent
-                              title=''
-                              onPress={async ()=>{
-                                  await postComment();
-                              }}>
-                              <Text>Post</Text>
-                          </Button>
-                      </Right>
-                  </Item>
-              </CardItem>
-          </Card>
+          <Item>
+              <FormTextInput
+                  placeholder='comment'
+                  autoFocus={true}
+                  onChangeText={handleCommentChange}
+                  value={inputs.comment}
+                  onSubmitEditing={( async () => {
+                      await postComment();
+                  })}
+                  multiline={false}
+              />
+          </Item>
           {loading ? (
               <Spinner/>
           ) : (

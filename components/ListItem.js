@@ -1,10 +1,9 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {ListItem as ListContainer, Thumbnail, Text, Left, Body, Right, Button, Icon, CardItem, Card, Content} from "native-base";
 import {AsyncStorage, TouchableOpacity} from 'react-native';
 import {mediaURL} from "../constants/UrlConst";
 import {fetchGET, fetchDelete} from "../hooks/APIHooks";
-import useLikesHooks from "../hooks/LikesHooks";
 import {AsyncImage} from '../components/AsynImage';
 
 
@@ -19,8 +18,6 @@ const ListItem = (props) => {
         cover: '',
         cover_id: '',
     });
-    const {updateLikesCount,updateLikesColor,likes,color} = useLikesHooks();
-
     const userInfo = async () => {
         try {
             let avatar = '';
@@ -93,9 +90,8 @@ const ListItem = (props) => {
 
 
     useEffect( () => {
-         userInfo();
-         updateLikesCount(props.singleMedia.file_id, user.token);
-    },[likes,color]);
+        userInfo();
+    },[]);
 
     return (
         <ListContainer>
@@ -128,7 +124,7 @@ const ListItem = (props) => {
                                     danger
                                     transparent
                                     onPress={ () => {
-                                       deleteFile();
+                                        deleteFile();
                                     }}
                                     title=''>
                                     <Icon
@@ -143,8 +139,8 @@ const ListItem = (props) => {
                     <TouchableOpacity onPress={()=>{props.navigation.push('Single', {
                         file: props.singleMedia,
                         userData: user,
-                        heartColor: color,
-                        likes: likes,
+                        mode: props.mode,
+                        getMedia: props.getMedia,
                     });
                     }}>
                         <CardItem cardBody>
@@ -160,13 +156,6 @@ const ListItem = (props) => {
                     </TouchableOpacity>
                     <CardItem>
                         <Left>
-                            <Button transparent  title='' onPress={ async ()=>{
-                                await updateLikesColor(props.singleMedia.file_id, user.token);
-                            }}>
-                                <Icon style={{fontSize: 25, color: color}}
-                                      active name="heart" />
-                                <Text>{likes} Likes</Text>
-                            </Button>
                         </Left>
                         <Right>
                             <Text>{user.timeAdded}</Text>

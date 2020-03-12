@@ -15,6 +15,7 @@ import Launch from "../views/Launch";
 import Info from "../views/Info";
 import Favourites from "../views/Favourites";
 import Search from "../views/Search";
+import Update from "../views/Update";
 
 const TabNavigator = createBottomTabNavigator(
     {
@@ -55,7 +56,6 @@ const TabNavigator = createBottomTabNavigator(
 TabNavigator.navigationOptions = ({navigation}) => {
     const {routeName} = navigation.state.routes[navigation.state.index];
     let header = true;
-
     if(routeName === 'Profile' || routeName === 'Search'){
         header = false;
     }
@@ -93,7 +93,17 @@ const AppStack = createStackNavigator(
         },
         Upload:{
             screen: Upload,
-        }
+        },
+        Update:{
+            screen:Update,
+        },
+        Profile:{
+            screen: Profile,
+            navigationOptions:{
+                headerLeft: ()=>{},
+                headerShown: false,
+            },
+        },
     },
 );
 

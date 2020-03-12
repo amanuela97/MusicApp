@@ -116,4 +116,18 @@ const fetchModify = async (endpoint = '', param = '', token = '', data = {} ) =>
     return await response.json();
 };
 
-export { getAllMedia, fetchGET, fetchPOST, fetchDelete, getUserMedia, fetchFormData, fetchModify};
+const fetchPut = async (endpoint = '', token = '', data = {} ) => {
+
+    const fetchOptions = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': token,
+        },
+        body: JSON.stringify(data),
+    };
+    const response = await fetch(apiUrl + endpoint , fetchOptions);
+    return await response.json();
+};
+
+export { getAllMedia, fetchGET, fetchPOST, fetchDelete, getUserMedia, fetchFormData, fetchModify, fetchPut};

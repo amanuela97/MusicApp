@@ -74,4 +74,19 @@ const modifyConstraints = {
     },
 };
 
-export {registerConstraints, uploadConstraints, modifyConstraints};
+const updateConstraints = {
+    username: {
+        length: {
+            minimum: 3,
+            message: 'must be at least 3 characters',
+        },
+    },
+    email: {
+        email: {
+            message: 'not valid.',
+        },
+    },
+
+};
+
+export {registerConstraints, uploadConstraints, modifyConstraints, updateConstraints};

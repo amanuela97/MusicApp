@@ -10,7 +10,7 @@ import {
 import PropTypes from 'prop-types';
 import FormTextInput from '../components/FormTextInput';
 import useModifyForm from "../hooks/ModifyHooks";
-import {validateField} from "../Utils/Validation";
+import validateField from "../Utils/Validation";
 import {modifyConstraints} from "../constants/ValidationConst";
 
 const Modify = (props) => {

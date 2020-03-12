@@ -7,6 +7,7 @@ import {AsyncStorage} from "react-native";
 import PropTypes from 'prop-types';
 import {fetchGET} from "../hooks/APIHooks";
 
+
 const List = (props) => {
     const {media, setMedia, myMedia, setMyMedia, fav, setFav, searchMedia} = useContext(MediaContext);
     const [loading, setLoading] = useState(true);
@@ -52,6 +53,7 @@ const List = (props) => {
             console.log(e.message);
         }
     };
+
 
 
     useEffect(() => {

@@ -41,8 +41,14 @@ const useModifyForm = () => {
             const resp = await fetchModify('media', file_id, token, data);
             console.log('modify resp', resp);
             if (resp.message) {
+                let data = [];
                 const result = await getUserMedia(token);
-                setMyMedia(result);
+                result.forEach(item => {
+                    if(item.media_type === 'video' || item.media_type === 'audio'){
+                        data.push(item);
+                    }
+                });
+                setMyMedia(data);
                 setLoading(false);
                 navigation.goBack(null);
             }

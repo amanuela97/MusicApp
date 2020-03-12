@@ -9,6 +9,7 @@ const useLikesHooks = () => {
     const [likes, setLikes] = useState(0);
 
     const updateLikesCount = async (fileId, token) => {
+        console.log('updateLikes');
         const logged = await AsyncStorage.getItem('user');
         const loggedUser = JSON.parse(logged);
 
@@ -20,6 +21,7 @@ const useLikesHooks = () => {
                 num++;
                 if(like.user_id === loggedUser.user_id){
                     setColor('red');
+                    console.log('in');
                 }
             });
         }
@@ -29,6 +31,7 @@ const useLikesHooks = () => {
 
 
     const updateLikesColor = async (fileId, token) => {
+        console.log('updateColor');
         try {
             let data = {
                 "file_id": fileId,
