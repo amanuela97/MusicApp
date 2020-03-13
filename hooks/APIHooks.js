@@ -20,7 +20,6 @@ const getAllMedia = async () => {
     try {
         const json = await fetchGET('tags','mussy');
         json.reverse();
-        json.splice(5);
         return await Promise.all(json.map(async (item) => {
                 return await fetchGET('media', item.file_id)
         }));

@@ -6,6 +6,7 @@ import {
     Text,
     Item,
     Spinner,
+    Body
 } from 'native-base';
 
 import {
@@ -134,7 +135,7 @@ const Upload = (props) => {
             {loading ? (
                 <Spinner/>
             ) : (
-                <Form>
+                <Body>
                     <Item>
                         <FormTextInput
                             placeholder='Title'
@@ -184,7 +185,7 @@ const Upload = (props) => {
                         <Text>Reset form</Text>
                     </Button>
 
-                </Form>
+                </Body>
             )}
         </Content>
     );
